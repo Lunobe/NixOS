@@ -1,0 +1,39 @@
+{pkgs, ...}: {
+  home.packages = with pkgs; [
+    android-tools
+    bat
+    bind
+    btrfs-assistant
+    chromium
+    claude-code
+    discord
+    easyeffects
+    fastfetch
+    firefox
+    impression
+    iperf3
+    jdk21
+    kdePackages.kdenlive
+    mpv
+    nautilus
+    nerd-fonts.jetbrains-mono
+    obs-studio
+    opencomposite
+    prismlauncher
+    protonup-qt
+    pywal
+    qbittorrent
+    rar
+    screen
+    speedtest-cli
+    telegram-desktop
+    tree
+    usbutils
+    vesktop
+    waybar
+    wayvr
+    wine
+    wofi
+    xrizer
+  ];
+}

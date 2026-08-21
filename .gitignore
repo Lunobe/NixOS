@@ -1,0 +1,21 @@
+# -- nix build output --
+
+/result
+
+# -- claude code --
+
+/CLAUDE.md
+
+# -- nx nuke-history backups --
+
+.git-backups/
+
+# -- obs-studio --
+
+modules/home/obs-studio/config/logs/
+modules/home/obs-studio/config/profiler_data/
+modules/home/obs-studio/config/updates/
+modules/home/obs-studio/config/.sentinel/
+modules/home/obs-studio/config/user.ini
+modules/home/obs-studio/config/plugin_config/obs-websocket/config.json
+modules/home/obs-studio/config/**/*.bak

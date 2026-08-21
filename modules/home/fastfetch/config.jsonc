@@ -1,0 +1,116 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    // "source" here is just a static fallback for the rare case fastfetch
+    // runs without the fish wrapper's --logo override (see home.nix); the
+    // wrapper picks a random file from ./images and passes it via --logo,
+    // which overrides this path but keeps type/width/padding below.
+    "source": "/etc/nixos/modules/home/fastfetch/images/21901f7bbe574a3b4b284c1d589c3024.jpg",
+    "type": "kitty",
+    "width": 36,
+    "padding": {
+      "top": 4,
+      "right": 2
+    }
+  },
+  "modules": [
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╭───────────────────────────────────────────╮"
+    },
+    {
+      "type": "host",
+      "key": "\u001b[38;5;13m🐂  \u001b[38;5;14mPC\u001b[0m"
+    },
+    {
+      "type": "cpu",
+      "key": "\u001b[38;5;10m│ 🔋\u001b[38;5;14m CPU\u001b[0m",
+      "showPeCoreCount": true
+    },
+    {
+      "type": "gpu",
+      "key": "\u001b[38;5;10m│ 🖥️\u001b[38;5;14m GPU\u001b[0m",
+      "format": "{2}"
+    },
+    {
+      "type": "memory",
+      "key": "\u001b[38;5;10m│ 🧠\u001b[38;5;14m RAM\u001b[0m"
+    },
+    {
+      "type": "disk",
+      "key": "\u001b[38;5;2m└ 📦\u001b[38;5;10m Disk\u001b[0m"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╰───────────────────────────────────────────╯"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╭───────────────────────────────────────────╮"
+    },
+    {
+      "type": "os",
+      "key": "\u001b[38;5;11m🧬 \u001b[38;5;10mOS\u001b[0m"
+    },
+    {
+      "type": "kernel",
+      "key": "\u001b[38;5;11m│ ⚙️ \u001b[38;5;10mKernel\u001b[0m"
+    },
+    {
+      "type": "packages",
+      "key": "\u001b[38;5;11m│ 📚 \u001b[38;5;10mPkgs\u001b[0m"
+    },
+    {
+      "type": "shell",
+      "key": "\u001b[38;5;11m└ 🧙 \u001b[38;5;10mShell\u001b[0m"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╰───────────────────────────────────────────╯"
+    },
+    "break",
+    {
+      "type": "de",
+      "key": "\u001b[38;5;6m🪟 \u001b[38;5;14mDE\u001b[0m"
+    },
+    {
+      "type": "lm",
+      "key": "\u001b[38;5;6m│ 🎨 \u001b[38;5;14mLM\u001b[0m"
+    },
+    {
+      "type": "wm",
+      "key": "\u001b[38;5;6m│ 🧱 \u001b[38;5;14mWM\u001b[0m"
+    },
+    {
+      "type": "wmtheme",
+      "key": "\u001b[38;5;6m└ 🧵\u001b[38;5;14m Theme\u001b[0m"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╰───────────────────────────────────────────╯"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╭───────────────────────────────────────────╮"
+    },
+    {
+      "type": "command",
+      "key": "🏅 Distro Hop Sobriety",
+      "keyColor": "11",
+      "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
+    },
+    {
+      "type": "uptime",
+      "key": "⏱️ Uptime",
+      "keyColor": "11"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;5;13m╰───────────────────────────────────────────╯"
+    },
+    "break"
+  ]
+}
