@@ -28,6 +28,7 @@
     obs-studio
     opencomposite
     pavucontrol
+    pay-respects
     prismlauncher
     protonup-qt
     pulseaudio

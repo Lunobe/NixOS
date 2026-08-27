@@ -169,6 +169,8 @@ in {
     interactiveShellInit = ''
       set -g fish_greeting
 
+      pay-respects fish | source
+
       if test -r /run/agenix/ghToken
           set -gx GH_TOKEN (cat /run/agenix/ghToken)
       end
