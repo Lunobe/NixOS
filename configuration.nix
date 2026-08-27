@@ -202,6 +202,8 @@
 
   services.printing.enable = true;
 
+  programs.gamemode.enable = true;
+
   programs.steam.enable = true;
 
   programs.ssh.knownHosts.github-com = {
