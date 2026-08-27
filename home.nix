@@ -151,7 +151,13 @@ in {
 
       # misc
       enable_audio_bell = false;
-      scrollback_lines = 10000;
+      # -1 = unlimited; kitty keeps it all in memory, so a long session with
+      # heavy output can grow RAM usage noticeably.
+      scrollback_lines = -1;
+
+      # lets `kitty @ get-text` (used by the save-scrollback alias) talk to
+      # the running instance without a manually configured listen_on socket.
+      allow_remote_control = "yes";
     };
   };
 
@@ -193,6 +199,8 @@ in {
       c = "clear";
       cl = "clear";
       whichpic = "command cat ~/.cache/fastfetch/current_image";
+      # dumps the full kitty scrollback (screen + history) to the given file.
+      save-scrollback = "kitty @ get-text --extent=all >";
 
       # --- eza aliases ---
 
