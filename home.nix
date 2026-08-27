@@ -200,7 +200,6 @@ in {
       cl = "clear";
       whichpic = "command cat ~/.cache/fastfetch/current_image";
       # dumps the full kitty scrollback (screen + history) to the given file.
-      save-scrollback = "kitty @ get-text --extent=all >";
       tb = "nc termbin.com 9999";
 
       # --- eza aliases ---
@@ -233,6 +232,15 @@ in {
       lta = "eza -a --tree --level=3"; # tree with hidden files, depth 3
       llt = "eza -l --tree --level=3"; # long tree, depth 3
       llta = "eza -la --tree --level=3"; # long tree with hidden files, depth 3
+    };
+
+    functions = {
+      # dumps the full kitty scrollback (screen + history) to a file;
+      # defaults to ~/kitty-scrollback.txt when no path is given.
+      save-scrollback = ''
+        set -q argv[1]; or set argv ~/kitty-scrollback.txt
+        kitty @ get-text --extent=all > $argv[1]
+      '';
     };
   };
 
