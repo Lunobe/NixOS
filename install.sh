@@ -282,6 +282,18 @@ if [ -n "$BTRFS_PART_INPUT" ]; then
 
   emit_fs_block() {
     local mountpoint="$1" subvol="$2"
+    # nixos-generate-config already wrote a fileSystems entry for this
+    # mountpoint if it was actually mounted when it ran — true for
+    # @snapshots/@home-snapshots in fresh-install mode specifically, since
+    # Phase 0 mounts the whole chosen layout at its real final paths before
+    # this step, unlike repo-only (where they only exist under the
+    # transient /mnt/btrfs-root subvolid=5 view) or @vmware (never mounted
+    # at its final path here either way). Appending a second definition for
+    # an already-declared mountpoint is a hard Nix eval error, not a warning.
+    if grep -qF "fileSystems.\"$mountpoint\"" "$TMP_HW"; then
+      echo "$mountpoint is already declared (nixos-generate-config found it mounted) — not duplicating."
+      return 0
+    fi
     {
       echo
       echo "  fileSystems.\"$mountpoint\" = {"
