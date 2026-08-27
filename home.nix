@@ -34,7 +34,8 @@
 
       out=~/.cache/niri-wal-theme/colors.kdl
       mkdir -p "$(dirname "$out")"
-      cat >"$out" <<EOF
+      tmp_out="$out.tmp.$$"
+      cat >"$tmp_out" <<EOF
       layout {
           border {
               active-color "$active"
@@ -45,6 +46,7 @@
           }
       }
       EOF
+      mv "$tmp_out" "$out"
 
       niri msg action load-config-file || true
     '';
@@ -280,8 +282,10 @@ in {
 
   # --- fastfetch ---
 
-  xdg.configFile."fastfetch/config.jsonc".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/fastfetch/config.jsonc";
+  xdg.configFile."fastfetch/config.jsonc" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/fastfetch/config.jsonc";
+    force = true;
+  };
 
   # -s just stops this from flashing colors during deploy; the runtime wal
   # call above omits it since it should recolor the terminal live.
@@ -295,8 +299,10 @@ in {
 
   # --- niri ---
 
-  xdg.configFile."niri/config.kdl".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/niri/config.kdl";
+  xdg.configFile."niri/config.kdl" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/niri/config.kdl";
+    force = true;
+  };
 
   home.packages = [niriWalTheme];
 
@@ -306,8 +312,10 @@ in {
 
   # --- obs-studio ---
 
-  xdg.configFile."obs-studio".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/obs-studio";
+  xdg.configFile."obs-studio" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/obs-studio";
+    force = true;
+  };
 
   # re-patched on every activation since OBS can rewrite this file at
   # runtime; the agenix secret stays the source of truth, not the file.
@@ -315,20 +323,29 @@ in {
   # install it won't exist until OBS has run once — skip the patch then.
   home.activation.obsWebsocketPassword = lib.hm.dag.entryAfter ["writeBoundary"] ''
     obsWebsocketConfig="${repoDir}/modules/obs-studio/plugin_config/obs-websocket/config.json"
+    obsWebsocketSecret="/run/agenix/obsWebsocketPassword"
     if [ -f "$obsWebsocketConfig" ]; then
-      run ${pkgs.jq}/bin/jq \
-        --arg pw "$(cat /run/agenix/obsWebsocketPassword)" \
-        '.server_password = $pw' \
-        "$obsWebsocketConfig" \
-        > "$obsWebsocketConfig.new"
-      run mv "$obsWebsocketConfig.new" "$obsWebsocketConfig"
+      if [ ! -r "$obsWebsocketSecret" ]; then
+        echo "obsWebsocketPassword: $obsWebsocketSecret is unreadable — leaving $obsWebsocketConfig untouched." >&2
+      elif ! ${pkgs.jq}/bin/jq empty "$obsWebsocketConfig" 2>/dev/null; then
+        echo "obsWebsocketPassword: $obsWebsocketConfig is not valid JSON — leaving it untouched." >&2
+      elif [[ -v DRY_RUN ]]; then
+        echo "would update server_password in $obsWebsocketConfig"
+      else
+        pw="$(cat "$obsWebsocketSecret")"
+        ${pkgs.jq}/bin/jq --arg pw "$pw" '.server_password = $pw' \
+          "$obsWebsocketConfig" > "$obsWebsocketConfig.new"
+        mv "$obsWebsocketConfig.new" "$obsWebsocketConfig"
+      fi
     fi
   '';
 
   # --- swaync ---
 
-  xdg.configFile."swaync".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/swaync";
+  xdg.configFile."swaync" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/swaync";
+    force = true;
+  };
 
   # --- icons ---
 
@@ -340,11 +357,15 @@ in {
 
   # --- wallpapers ---
 
-  home.file."Pictures/Wallpapers".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/user/wallpapers";
+  home.file."Pictures/Wallpapers" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/user/wallpapers";
+    force = true;
+  };
 
   # --- waypaper ---
 
-  xdg.configFile."waypaper".source =
-    config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/waypaper";
+  xdg.configFile."waypaper" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/waypaper";
+    force = true;
+  };
 }
