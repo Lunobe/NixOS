@@ -201,6 +201,7 @@ in {
       whichpic = "command cat ~/.cache/fastfetch/current_image";
       # dumps the full kitty scrollback (screen + history) to the given file.
       save-scrollback = "kitty @ get-text --extent=all >";
+      tb = "nc termbin.com 9999";
 
       # --- eza aliases ---
 
