@@ -236,10 +236,15 @@ in {
 
     functions = {
       # dumps the full kitty scrollback (screen + history) to a file;
-      # defaults to ~/kitty-scrollback.txt when no path is given.
+      # defaults to ~/kitty-scrollback.txt when no path is given, and "-"
+      # writes to stdout instead (e.g. `save-scrollback - | tb`).
       save-scrollback = ''
         set -q argv[1]; or set argv ~/kitty-scrollback.txt
-        kitty @ get-text --extent=all > $argv[1]
+        if test "$argv[1]" = -
+            kitty @ get-text --extent=all
+        else
+            kitty @ get-text --extent=all > $argv[1]
+        end
       '';
     };
   };
