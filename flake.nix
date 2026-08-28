@@ -24,11 +24,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Fork of xwayland-satellite adding X11 keyboard grab forwarding
-    # (xwayland-keyboard-grab-unstable-v1 -> keyboard-shortcuts-inhibit-unstable-v1),
-    # so X11 apps that call XGrabKeyboard (VMware, VirtualBox, remote-desktop
-    # clients) properly capture Win+E/Ctrl+Alt/etc. instead of niri intercepting
-    # them. Tracks upstream issue Supreeeme/xwayland-satellite#220 (unfixed).
+    # Fork adding X11 keyboard grab forwarding (xwayland-keyboard-grab-unstable-v1
+    # -> keyboard-shortcuts-inhibit-unstable-v1) so XGrabKeyboard apps (VMware,
+    # VirtualBox, remote-desktop) capture keys instead of niri intercepting them.
+    # Tracks Supreeeme/xwayland-satellite#220 (unfixed).
     xwayland-satellite-patched = {
       url = "github:Lunobe/xwayland-satellite/keyboard-grab-forwarding";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -58,9 +57,9 @@
       modules = [
         ./configuration.nix
 
-        # pins the "nixpkgs" registry alias to this flake's locked input,
-        # so `nix search`/`nix eval nixpkgs#...` resolve offline instead of
-        # hitting GitHub; freshness comes from `nx up`, not a live lookup.
+        # pins the nixpkgs registry alias to this flake's locked input, so
+        # `nix search`/`nix eval nixpkgs#...` resolve offline; freshness
+        # comes from `nx up`, not a live lookup.
         {
           nix.registry.nixpkgs.flake = nixpkgs;
           nix.nixPath = ["nixpkgs=${nixpkgs}"];

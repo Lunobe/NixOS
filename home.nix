@@ -153,12 +153,12 @@ in {
 
       # misc
       enable_audio_bell = false;
-      # -1 = unlimited; kitty keeps it all in memory, so a long session with
-      # heavy output can grow RAM usage noticeably.
+      # -1 = unlimited — kitty keeps it in memory, so a long session can
+      # grow RAM usage noticeably.
       scrollback_lines = -1;
 
-      # lets `kitty @ get-text` (used by the save-scrollback alias) talk to
-      # the running instance without a manually configured listen_on socket.
+      # lets `kitty @ get-text` (save-scrollback) talk to the running
+      # instance without a configured listen_on socket.
       allow_remote_control = "yes";
     };
   };
@@ -177,9 +177,8 @@ in {
           set -gx GH_TOKEN (cat /run/agenix/ghToken)
       end
 
-      # config.jsonc's module colors are ANSI palette indices (0-15), not
-      # fixed RGB, so recoloring kitty's palette via wal below recolors
-      # fastfetch's output too, with no config.jsonc changes needed.
+      # config.jsonc's module colors are ANSI indices, not fixed RGB, so
+      # recoloring kitty's palette via wal below recolors fastfetch too.
       set -l ff_logo (find "${repoDir}/modules/fastfetch/images" -type f | shuf -n 1)
       if test -n "$ff_logo"
           wal -q -n -e -i "$ff_logo"
@@ -203,45 +202,44 @@ in {
       c = "clear";
       cl = "clear";
       whichpic = "command cat ~/.cache/fastfetch/current_image";
-      # dumps the full kitty scrollback (screen + history) to the given file.
       tb = "nc termbin.com 9999";
+      "7z" = "7zz";
 
       # --- eza aliases ---
 
       # basic listings
-      ls = "eza"; # standard list
-      l = "eza -1"; # one column
-      la = "eza -1a"; # one column with hidden files
-      ll = "eza -l"; # long format
-      lla = "eza -la"; # long format with hidden files
+      ls = "eza";
+      l = "eza -1";
+      la = "eza -1a";
+      ll = "eza -l";
+      lla = "eza -la";
 
       # filtered listings
-      ld = "eza -D"; # directories only
-      lld = "eza -lD"; # long format, directories only
-      lf = "eza -f"; # files only
-      llf = "eza -lf"; # long format, files only
+      ld = "eza -D";
+      lld = "eza -lD";
+      lf = "eza -f";
+      llf = "eza -lf";
 
       # sort variants
-      lsz = "eza -l --sort=size"; # sort by size
-      lsx = "eza -l --sort=extension"; # sort by extension
-      ltm = "eza -l --sort=modified"; # sort by modified time
-      lcr = "eza -l --sort=created"; # sort by created time
+      lsz = "eza -l --sort=size";
+      lsx = "eza -l --sort=extension";
+      ltm = "eza -l --sort=modified";
+      lcr = "eza -l --sort=created";
 
       # git-aware
-      lgit = "eza -l --git"; # show git status
-      lx = "eza -lbhHigUmuS --git"; # extended info with git
+      lgit = "eza -l --git";
+      lx = "eza -lbhHigUmuS --git";
 
       # tree
-      lt = "eza --tree --level=3"; # tree, depth 3 by default
-      lta = "eza -a --tree --level=3"; # tree with hidden files, depth 3
-      llt = "eza -l --tree --level=3"; # long tree, depth 3
-      llta = "eza -la --tree --level=3"; # long tree with hidden files, depth 3
+      lt = "eza --tree --level=3";
+      lta = "eza -a --tree --level=3";
+      llt = "eza -l --tree --level=3";
+      llta = "eza -la --tree --level=3";
     };
 
     functions = {
-      # dumps the full kitty scrollback (screen + history) to a file;
-      # defaults to ~/kitty-scrollback.txt when no path is given, and "-"
-      # writes to stdout instead (e.g. `save-scrollback - | tb`).
+      # "-" writes to stdout instead of the default ~/kitty-scrollback.txt,
+      # e.g. `save-scrollback - | tb`.
       save-scrollback = ''
         set -q argv[1]; or set argv ~/kitty-scrollback.txt
         if test "$argv[1]" = -
@@ -265,7 +263,6 @@ in {
 
   services.ssh-agent.enable = true;
 
-  # force=true replaces the plain file that lived here before this migration.
   home.file.".ssh/id_ed25519" = {
     source = config.lib.file.mkOutOfStoreSymlink "/run/agenix/sshPrivateKey";
     force = true;
@@ -287,8 +284,8 @@ in {
     force = true;
   };
 
-  # -s just stops this from flashing colors during deploy; the runtime wal
-  # call above omits it since it should recolor the terminal live.
+  # -s stops this from flashing colors during deploy; the runtime wal call
+  # above omits it since it should recolor the terminal live.
   home.activation.warmFastfetchWalCache = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run bash -c '
       ${pkgs.findutils}/bin/find "${repoDir}/modules/fastfetch/images" -type f -print0 \
@@ -317,10 +314,9 @@ in {
     force = true;
   };
 
-  # re-patched on every activation since OBS can rewrite this file at
-  # runtime; the agenix secret stays the source of truth, not the file.
-  # config.json is gitignored (OBS owns it at runtime), so on a fresh
-  # install it won't exist until OBS has run once — skip the patch then.
+  # re-patched every activation since OBS can rewrite this file at runtime —
+  # the agenix secret is the source of truth, not the file. config.json is
+  # gitignored, so it won't exist until OBS has run once; skip the patch then.
   home.activation.obsWebsocketPassword = lib.hm.dag.entryAfter ["writeBoundary"] ''
     obsWebsocketConfig="${repoDir}/modules/obs-studio/plugin_config/obs-websocket/config.json"
     obsWebsocketSecret="/run/agenix/obsWebsocketPassword"
@@ -349,10 +345,9 @@ in {
 
   # --- icons ---
 
-  # Copied into the Nix store (not mkOutOfStoreSymlink like the rest of this
-  # file) because Steam's pressure-vessel sandbox replaces /etc with the
-  # runtime image's own /etc, so a symlink pointing at ${repoDir} (/etc/nixos)
-  # resolves to nothing inside it and steamwebhelper crash-loops on launch.
+  # Copied into the store, not symlinked like the rest of this file — Steam's
+  # pressure-vessel sandbox replaces /etc, so a symlink to ${repoDir} would
+  # resolve to nothing inside it and steamwebhelper crash-loops on launch.
   home.file.".local/share/icons".source = ./modules/user/icons;
 
   # --- wallpapers ---

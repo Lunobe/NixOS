@@ -18,8 +18,8 @@
 
   nix.settings.auto-optimise-store = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
-  # disables the live channels.nixos.org lookup that was hitting GitHub's
-  # rate limit; the "nixpkgs" alias is pinned in flake.nix instead.
+  # avoids channels.nixos.org hitting GitHub's rate limit — nixpkgs is
+  # pinned in flake.nix instead.
   nix.settings.flake-registry = "";
 
   system.stateVersion = "26.05";
@@ -35,8 +35,8 @@
   systemd.settings.Manager.ShowStatus = false;
 
   # --- store cleanup ---
-  # runs on boot rather than every switch, so back-to-back switches without
-  # a reboot don't keep re-fetching/re-deleting the same flake-eval sources.
+  # runs on boot, not every switch — avoids re-fetching/deleting the same
+  # flake-eval sources across back-to-back switches.
 
   systemd.services.nix-gc-boot = {
     description = "Garbage-collect orphaned Nix store paths";
@@ -49,9 +49,9 @@
   };
 
   # --- secrets ---
-  # identity.txt is a manually-bootstrapped decrypted copy that
-  # never enters /nix/store or git; secrets/identity.txt.age is passphrase-
-  # encrypted and safe to publish.
+  # identity.txt is a manually-bootstrapped decrypted copy — never in
+  # /nix/store or git; secrets/identity.txt.age is passphrase-encrypted
+  # and safe to publish.
 
   age.identityPaths = ["/var/lib/agenix-bootstrap/identity.txt"];
   age.secrets.userPassword.file = "${repoDir}/secrets/user-password.age";
@@ -92,12 +92,11 @@
     mode = "0400";
   };
 
-  # Nix's github: fetcher hits GitHub's unauthenticated API (60 req/hour
-  # per IP) to resolve branch refs like nixos-unstable — easy to exhaust
-  # with routine flake-input updates. access-tokens can't be set directly
-  # from the agenix secret (nix.conf is generated at build time, before
-  # secrets are decrypted), so an activation script writes a derived,
-  # runtime-only snippet that nix.conf pulls in via !include.
+  # github: fetcher hits GitHub's 60 req/hour unauthenticated limit —
+  # routine flake updates exhaust it. Can't set access-tokens directly from
+  # the agenix secret (nix.conf is built before secrets decrypt), so an
+  # activation script writes a runtime-only snippet nix.conf pulls in via
+  # !include.
   system.activationScripts.nixAccessTokens = {
     deps = ["agenix"];
     text = ''
@@ -213,10 +212,9 @@
 
   services.flatpak.enable = true;
 
-  # nixpkgs' flatpak module only manages the daemon, not remotes, so flathub
-  # has to be added imperatively; this makes that self-healing like the rest
-  # of the config instead of a one-off `flatpak remote-add` that a fresh
-  # install would silently lack.
+  # flatpak's module only manages the daemon, not remotes — this makes
+  # adding flathub self-healing instead of a one-off command a fresh
+  # install would lack.
   systemd.services.flatpak-add-flathub = {
     description = "Add the Flathub Flatpak remote";
     wantedBy = ["multi-user.target"];
