@@ -201,7 +201,6 @@ in {
       "...." = "cd ../../..";
       c = "clear";
       cl = "clear";
-      whichpic = "command cat ~/.cache/fastfetch/current_image";
       tb = "nc termbin.com 9999";
       "7z" = "7zz";
 
@@ -241,7 +240,7 @@ in {
       # "-" writes to stdout instead of the default ~/kitty-scrollback.txt,
       # e.g. `save-scrollback - | tb`.
       save-scrollback = ''
-        set -q argv[1]; or set argv ~/kitty-scrollback.txt
+        set -q argv[1]; or set argv ~/save-scrollback.txt
         if test "$argv[1]" = -
             kitty @ get-text --extent=all
         else
