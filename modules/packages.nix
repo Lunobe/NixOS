@@ -50,5 +50,6 @@
     wofi
     xrizer
     xwayland-satellite
+    obsidian
   ];
 }
