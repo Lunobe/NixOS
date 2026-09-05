@@ -25,6 +25,7 @@
     mpv
     nautilus
     nerd-fonts.jetbrains-mono
+    obsidian
     obs-studio
     opencomposite
     pavucontrol
@@ -50,6 +51,5 @@
     wofi
     xrizer
     xwayland-satellite
-    obsidian
   ];
 }
