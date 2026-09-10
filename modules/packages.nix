@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     _7zz
+    adwaita-icon-theme
     android-tools
     appimage-run
     awww
