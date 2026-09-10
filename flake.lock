@@ -197,11 +197,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1787559233,
-        "narHash": "sha256-VXKUyKxgsqoPkO9foY1J945zqvFbbYGIxANWkUOnI6E=",
+        "lastModified": 1789039511,
+        "narHash": "sha256-edroqCo4+Tg717O28kI77BOjmEKAr8nH5xvkdyjhyJk=",
         "owner": "Lunobe",
         "repo": "xwayland-satellite",
-        "rev": "42bcaa1472ef22c2f73284956f45de77c134a52d",
+        "rev": "5f934dc2efce5e2f89f9ff0b8baf08ccf2b9d370",
         "type": "github"
       },
       "original": {
