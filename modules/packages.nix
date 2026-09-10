@@ -39,6 +39,7 @@
     screen
     speedtest-cli
     swaynotificationcenter
+    swayosd
     telegram-desktop
     tree
     usbutils

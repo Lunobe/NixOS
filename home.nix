@@ -51,6 +51,20 @@
       niri msg action load-config-file || true
     '';
   };
+
+  niriLayoutOsd = pkgs.writeShellApplication {
+    name = "niri-layout-osd";
+    runtimeInputs = [pkgs.niri pkgs.jq pkgs.swayosd];
+    text = ''
+      mapfile -t names < <(niri msg -j keyboard-layouts | jq -r '.names[]')
+
+      niri msg -j event-stream | while read -r line; do
+        idx=$(jq -r 'select(has("KeyboardLayoutSwitched")) | .KeyboardLayoutSwitched.idx' <<<"$line")
+        [ -n "$idx" ] || continue
+        swayosd-client --custom-message "''${names[$idx]}" --custom-icon input-keyboard-symbolic
+      done
+    '';
+  };
 in {
   imports = [
     ./modules/packages.nix
@@ -300,7 +314,7 @@ in {
     force = true;
   };
 
-  home.packages = [niriWalTheme];
+  home.packages = [niriWalTheme niriLayoutOsd];
 
   home.activation.applyNiriWalTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run ${niriWalTheme}/bin/niri-wal-theme || true
@@ -339,6 +353,13 @@ in {
 
   xdg.configFile."swaync" = {
     source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/swaync";
+    force = true;
+  };
+
+  # --- swayosd ---
+
+  xdg.configFile."swayosd" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/swayosd";
     force = true;
   };
 

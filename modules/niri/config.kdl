@@ -71,6 +71,8 @@ include optional=true "~/.cache/niri-wal-theme/colors.kdl"
 
 spawn-at-startup "waybar"
 spawn-at-startup "swaync"
+spawn-at-startup "swayosd-server"
+spawn-at-startup "niri-layout-osd"
 spawn-at-startup "miru-daemon"
 spawn-at-startup "awww-daemon"
 spawn-at-startup "awww-daemon" "-n" "backdrop"
