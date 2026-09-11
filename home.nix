@@ -65,42 +65,6 @@
       done
     '';
   };
-
-  # grp:caps_toggle (input.keyboard.xkb.options in modules/niri/config.kdl) makes
-  # Caps_Lock switch language and Shift+Caps_Lock do the actual Caps Lock toggle;
-  # niri has no IPC event for that, so this watches the LED sysfs nodes instead
-  # (the kernel sends inotify on their brightness attribute) and reports whichever
-  # keyboard's LED changed, since more than one may be plugged in at once.
-  niriCapslockOsd = pkgs.writeShellApplication {
-    name = "niri-capslock-osd";
-    runtimeInputs = [pkgs.inotify-tools pkgs.swayosd pkgs.coreutils];
-    text = ''
-      shopt -s nullglob
-      leds=(/sys/class/leds/*::capslock/brightness)
-      [ ''${#leds[@]} -gt 0 ] || exit 0
-
-      is_on() {
-        for led in "''${leds[@]}"; do
-          [ "$(cat "$led" 2>/dev/null)" != "0" ] && return 0
-        done
-        return 1
-      }
-
-      state=$(is_on && echo on || echo off)
-
-      inotifywait -m -e modify -q "''${leds[@]}" | while read -r _; do
-        new_state=$(is_on && echo on || echo off)
-        [ "$new_state" = "$state" ] && continue
-        state=$new_state
-
-        if [ "$state" = on ]; then
-          swayosd-client --custom-message "Caps Lock: On" --custom-icon input-keyboard-symbolic
-        else
-          swayosd-client --custom-message "Caps Lock: Off" --custom-icon input-keyboard-symbolic
-        fi
-      done
-    '';
-  };
 in {
   imports = [
     ./modules/packages.nix
@@ -350,7 +314,7 @@ in {
     force = true;
   };
 
-  home.packages = [niriWalTheme niriLayoutOsd niriCapslockOsd];
+  home.packages = [niriWalTheme niriLayoutOsd];
 
   home.activation.applyNiriWalTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run ${niriWalTheme}/bin/niri-wal-theme || true
