@@ -363,6 +363,13 @@ in {
     force = true;
   };
 
+  # --- waybar ---
+
+  xdg.configFile."waybar" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/waybar";
+    force = true;
+  };
+
   # --- icons ---
 
   # Copied into the store, not symlinked like the rest of this file — Steam's
