@@ -41,10 +41,13 @@
     "niri/window": {
         "format": "{title}"
     },
+    // format-<lang> overrides are matched against xkbregistry's short_description
+    // (not {short}) and, on a match, substituted as a *positional* fmt arg into
+    // "format" above (a waybar bug) — with a named placeholder like "{short}"
+    // that throws "argument not found" and the module stops updating. Plain
+    // named-placeholder format sidesteps it entirely.
     "niri/language": {
-        "format": "{short}",
-        "format-us": "US",
-        "format-ru": "RU"
+        "format": "{short}"
     },
     "keyboard-state": {
         "numlock": true,

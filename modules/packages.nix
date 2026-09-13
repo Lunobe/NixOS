@@ -53,5 +53,6 @@
     wofi
     xrizer
     xwayland-satellite
+    kdePackages.kate
   ];
 }
