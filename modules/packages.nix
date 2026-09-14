@@ -20,6 +20,7 @@
     impression
     iperf3
     jdk21
+    kdePackages.kate
     kdePackages.kdenlive
     libnotify
     miru
@@ -53,6 +54,5 @@
     wofi
     xrizer
     xwayland-satellite
-    kdePackages.kate
   ];
 }
