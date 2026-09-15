@@ -54,6 +54,5 @@
     wofi
     xrizer
     xwayland-satellite
-    ydotool
   ];
 }
