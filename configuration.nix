@@ -210,6 +210,8 @@
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
   };
 
+  programs.ydotool.enable = true;
+
   services.flatpak.enable = true;
 
   # flatpak's module only manages the daemon, not remotes — this makes
