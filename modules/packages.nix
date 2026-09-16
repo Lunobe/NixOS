@@ -54,5 +54,6 @@
     wofi
     xrizer
     xwayland-satellite
+    gamescope
   ];
 }
