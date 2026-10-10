@@ -217,6 +217,7 @@ in {
       cl = "clear";
       tb = "nc termbin.com 9999";
       "7z" = "7zz";
+      hostweb = "python3 -m http.server 8080";
 
       # --- eza aliases ---
 
