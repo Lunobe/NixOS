@@ -55,5 +55,6 @@
     xrizer
     xwayland-satellite
     vscode
+    python3
   ];
 }
