@@ -21,6 +21,7 @@
   # avoids channels.nixos.org hitting GitHub's rate limit — nixpkgs is
   # pinned in flake.nix instead.
   nix.settings.flake-registry = "";
+  programs.nix-ld.enable = true;
 
   system.stateVersion = "26.05";
 
