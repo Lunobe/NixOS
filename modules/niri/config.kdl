@@ -4,7 +4,7 @@ cursor {
 }
 
 environment {
-    XCURSOR_THEME "Minecraft-Cursor"
+    // XCURSOR_THEME "Minecraft-Cursor"
     XCURSOR_SIZE "32"
 }
 
