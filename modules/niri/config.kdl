@@ -1,5 +1,5 @@
 cursor {
-    xcursor-theme "Minecraft-Cursor"
+    // xcursor-theme "Minecraft-Cursor"
     xcursor-size 32
 }
 

@@ -35,6 +35,7 @@
     prismlauncher
     protonup-qt
     pulseaudio
+    python3
     pywal
     qbittorrent
     rar
@@ -46,6 +47,7 @@
     tree
     usbutils
     vesktop
+    vscode
     waybar
     waypaper
     wayvr
@@ -54,7 +56,5 @@
     wofi
     xrizer
     xwayland-satellite
-    vscode
-    python3
   ];
 }
