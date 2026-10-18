@@ -56,5 +56,6 @@
     wofi
     xrizer
     xwayland-satellite
+    ark
   ];
 }
