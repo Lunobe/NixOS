@@ -131,6 +131,7 @@ binds {
     Mod+Shift+W        repeat=false       { spawn "waypaper" "--random"; }
     Mod+Ctrl+Shift+W   repeat=false       { spawn "waypaper"; }
     Mod+E              repeat=false       { spawn "nautilus"; }
+    Mod+P              repeat=false       { spawn "pavucontrol"; }
     Mod+Alt+Z          repeat=false       { spawn "miructl" "toggle"; }
 
     Mod+Left  { focus-column-left; }

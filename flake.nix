@@ -2,12 +2,10 @@
   description = "NixOS configuration for Lunobe";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-    # only for packages missing from the release branch (see the overlay below)
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -35,16 +33,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # XLibre isn't in nixpkgs (maintainers declined); dev-for-26.05 tracks nixos-26.05.
+    # XLibre isn't in nixpkgs (maintainers declined); dev-26.11 tracks unstable.
     xlibre-overlay = {
-      url = "git+https://codeberg.org/takagemacoed/xlibre-overlay?ref=dev-for-26.05";
+      url = "git+https://codeberg.org/takagemacoed/xlibre-overlay?ref=dev-26.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = {
     nixpkgs,
-    nixpkgs-unstable,
     home-manager,
     nix-index-database,
     agenix,
@@ -75,13 +72,7 @@
           nix.nixPath = ["nixpkgs=${nixpkgs}"];
         }
 
-        {
-          nixpkgs.overlays = [
-            xwayland-satellite-patched.overlays.default
-            # miru was dropped from 26.05 but re-added on unstable
-            (final: prev: {inherit (nixpkgs-unstable.legacyPackages.${system}) miru;})
-          ];
-        }
+        {nixpkgs.overlays = [xwayland-satellite-patched.overlays.default];}
 
         xlibre-overlay.nixosModules.overlay-xlibre-xserver
         xlibre-overlay.nixosModules.overlay-all-xlibre-drivers
