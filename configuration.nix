@@ -147,6 +147,17 @@
 
   # --- display ---
 
+  services.xserver = {
+    enable = true;
+    desktopManager.xfce.enable = true;
+    # greetd doesn't start X itself; tuigreet launches X sessions via startx
+    displayManager.startx.enable = true;
+    xkb = {
+      layout = "us,ru";
+      options = "grp:caps_toggle,compose:ralt";
+    };
+  };
+
   services.greetd = {
     enable = true;
     settings.default_session = {
@@ -155,6 +166,10 @@
         "--time"
         "--asterisks"
         "--remember"
+        "--remember-user-session"
+        "--sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
+        "--xsessions ${config.services.displayManager.sessionData.desktops}/share/xsessions"
+        "--xsession-wrapper 'startx /usr/bin/env'"
         "--theme 'border=yellow;text=yellow;title=yellow;prompt=yellow;input=yellow;action=yellow;button=yellow;container=black;greet=lightyellow'"
       ];
       user = "greeter";
