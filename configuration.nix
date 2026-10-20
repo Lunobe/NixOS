@@ -152,6 +152,10 @@
     desktopManager.xfce.enable = true;
     # greetd doesn't start X itself; tuigreet launches X sessions via startx
     displayManager.startx.enable = true;
+    # modesetting's default TearFree stacks a second vsync on top of xfwm4's, adding cursor lag
+    deviceSection = ''
+      Option "TearFree" "false"
+    '';
     xkb = {
       layout = "us,ru";
       options = "grp:caps_toggle,compose:ralt";
