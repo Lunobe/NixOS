@@ -32,12 +32,6 @@
       url = "github:Lunobe/xwayland-satellite/keyboard-grab-forwarding";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # XLibre isn't in nixpkgs (maintainers declined); dev-26.11 tracks unstable.
-    xlibre-overlay = {
-      url = "git+https://codeberg.org/takagemacoed/xlibre-overlay?ref=dev-26.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -47,7 +41,6 @@
     agenix,
     nx,
     xwayland-satellite-patched,
-    xlibre-overlay,
     ...
   }: let
     repoDir = "/etc/nixos";
@@ -73,9 +66,6 @@
         }
 
         {nixpkgs.overlays = [xwayland-satellite-patched.overlays.default];}
-
-        xlibre-overlay.nixosModules.overlay-xlibre-xserver
-        xlibre-overlay.nixosModules.overlay-all-xlibre-drivers
 
         agenix.nixosModules.default
         {environment.systemPackages = [agenix.packages.${system}.default];}
