@@ -256,6 +256,14 @@
 
   programs.niri.enable = true;
 
+  services.syncthing = {
+    enable = true;
+    user = "lunobe";
+    dataDir = "/home/lunobe";
+    configDir = "/home/lunobe/.config/syncthing";
+    openDefaultPorts = true;
+  };
+
   # --- users ---
 
   users.users.${username} = {

@@ -57,5 +57,6 @@
     xrizer
     xwayland-satellite
     rsync
+    nmap
   ];
 }
