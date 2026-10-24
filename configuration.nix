@@ -262,6 +262,27 @@
     dataDir = "/home/lunobe";
     configDir = "/home/lunobe/.config/syncthing";
     openDefaultPorts = true;
+    overrideDevices = true;
+    overrideFolders = true;
+    settings = {
+      devices = {
+        potato = {
+          id = "443ROIT-5VQ553Y-QLT3K33-HFCLH2K-PLYWTAQ-K4YY2G7-W6DVFE6-CZVFIQH";
+          addresses = [ "tcp://lunobe.xyz:22000" "tcp://10.100.102.55:22000" "dynamic" ];
+        };
+        phone.id = "7BBAYUA-EEBULTS-B566YE7-4XIULJX-RF2ZFBO-B4VQWFY-QB43K43-FAF2EQX";
+      };
+      folders = {
+        dreamlog = {
+          path = "/home/lunobe/Documents/My awesome vault/dreamlog";
+          devices = [ "potato" "phone" ];
+        };
+        blog = {
+          path = "/home/lunobe/Documents/My awesome vault/blog";
+          devices = [ "potato" "phone" ];
+        };
+      };
+    };
   };
 
   # --- users ---
