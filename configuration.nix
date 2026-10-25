@@ -122,6 +122,7 @@
     allowedTCPPorts = [
       19762 # Minecraft
     ];
+    trustedInterfaces = [ "zt+" ];
   };
 
   services.avahi = {
