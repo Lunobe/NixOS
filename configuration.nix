@@ -15,10 +15,11 @@
   # --- nix ---
 
   nixpkgs.config.allowUnfree = true;
-  # pywal16 passes "--prefix PATH : …" as one makeWrapperArgs element, which
-  # structuredAttrs no longer word-splits, so makeWrapper rejects it.
+  # Workarounds for nixpkgs regressions (2026-10 update); drop once fixed upstream.
   nixpkgs.overlays = [
     (_: prev: {
+      # pywal16 passes "--prefix PATH : …" as one makeWrapperArgs element, which
+      # structuredAttrs no longer word-splits, so makeWrapper rejects it.
       pywal16 = prev.pywal16.overrideAttrs (old: {
         makeWrapperArgs = lib.concatMap (lib.splitString " ") old.makeWrapperArgs;
       });
@@ -57,6 +58,7 @@
   # vmware-modules installs .ko files by hand, bypassing nixpkgs' kmodigest
   # signing, so the kernel-modules aggregator fails on missing *.ko.cer.
   # Sign in postFixup so stripping can't drop the appended signature.
+  # Temporary (2026-10 update); drop once nixpkgs' vmware package signs them.
   boot.kernelPackages = pkgs.linuxPackages.extend (_: super: {
     vmware = super.vmware.overrideAttrs (old: {
       postFixup =
