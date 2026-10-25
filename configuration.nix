@@ -22,6 +22,21 @@
       pywal16 = prev.pywal16.overrideAttrs (old: {
         makeWrapperArgs = lib.concatMap (lib.splitString " ") old.makeWrapperArgs;
       });
+      # patchelf >= 0.18 leaves vmnet-natd with a PHDR outside any LOAD
+      # segment, so it segfaults in ld.so and vmware-networks fails to start.
+      vmware-workstation = prev.vmware-workstation.overrideAttrs (old: {
+        preFixup =
+          (old.preFixup or "")
+          + ''
+            export PATH=${prev.patchelf.overrideAttrs {
+              version = "0.15.2";
+              src = prev.fetchurl {
+                url = "https://github.com/NixOS/patchelf/releases/download/0.15.2/patchelf-0.15.2.tar.bz2";
+                hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+              };
+            }}/bin:$PATH
+          '';
+      });
     })
   ];
 
