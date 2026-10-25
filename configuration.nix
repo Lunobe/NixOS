@@ -15,6 +15,15 @@
   # --- nix ---
 
   nixpkgs.config.allowUnfree = true;
+  # pywal16 passes "--prefix PATH : …" as one makeWrapperArgs element, which
+  # structuredAttrs no longer word-splits, so makeWrapper rejects it.
+  nixpkgs.overlays = [
+    (_: prev: {
+      pywal16 = prev.pywal16.overrideAttrs (old: {
+        makeWrapperArgs = lib.concatMap (lib.splitString " ") old.makeWrapperArgs;
+      });
+    })
+  ];
 
   nix.settings.auto-optimise-store = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
@@ -30,7 +39,20 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 20;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages;
+  # vmware-modules installs .ko files by hand, bypassing nixpkgs' kmodigest
+  # signing, so the kernel-modules aggregator fails on missing *.ko.cer.
+  # Sign in postFixup so stripping can't drop the appended signature.
+  boot.kernelPackages = pkgs.linuxPackages.extend (_: super: {
+    vmware = super.vmware.overrideAttrs (old: {
+      postFixup =
+        (old.postFixup or "")
+        + ''
+          for ko in "$out"/lib/modules/*/misc/*.ko; do
+            ${lib.getExe pkgs.buildPackages.kmodigest} "$ko"
+          done
+        '';
+    });
+  });
   boot.consoleLogLevel = 0;
   boot.kernelParams = ["quiet" "udev.log_level=3"];
   systemd.settings.Manager.ShowStatus = false;
@@ -122,7 +144,7 @@
     allowedTCPPorts = [
       19762 # Minecraft
     ];
-    trustedInterfaces = [ "zt+" ];
+    trustedInterfaces = ["zt+"];
   };
 
   services.avahi = {
