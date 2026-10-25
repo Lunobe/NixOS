@@ -27,6 +27,7 @@
     mpv
     nautilus
     nerd-fonts.jetbrains-mono
+    nmap
     obsidian
     obs-studio
     opencomposite
@@ -39,6 +40,7 @@
     pywal
     qbittorrent
     rar
+    rsync
     screen
     speedtest-cli
     swaynotificationcenter
@@ -56,7 +58,5 @@
     wofi
     xrizer
     xwayland-satellite
-    rsync
-    nmap
   ];
 }
