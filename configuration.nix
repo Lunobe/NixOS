@@ -139,6 +139,13 @@
     };
   };
 
+  services.zerotierone = {
+    enable = true;
+    joinNetworks = [
+      "3b19b3a7160f7479"
+    ];
+  };
+
   # --- locale ---
 
   time.timeZone = timeZone;
