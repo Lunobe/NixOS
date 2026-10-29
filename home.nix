@@ -377,6 +377,11 @@ in {
   # resolve to nothing inside it and steamwebhelper crash-loops on launch.
   home.file.".local/share/icons".source = ./modules/user/icons;
 
+  # --- mangohud ---
+
+  # Store copy for the same pressure-vessel reason as icons above.
+  xdg.configFile."MangoHud/MangoHud.conf".source = ./modules/mangohud/MangoHud.conf;
+
   # --- wallpapers ---
 
   home.file."Pictures/Wallpapers" = {

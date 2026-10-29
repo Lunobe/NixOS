@@ -23,6 +23,7 @@
     kdePackages.kate
     kdePackages.kdenlive
     libnotify
+    mangohud
     miru
     mpv
     nautilus
