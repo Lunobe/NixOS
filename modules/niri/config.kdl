@@ -109,6 +109,13 @@ window-rule {
 }
 
 window-rule {
+    match app-id="^claude-popup$"
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 650; }
+}
+
+window-rule {
     geometry-corner-radius 4
     clip-to-geometry true
 }
@@ -123,6 +130,7 @@ binds {
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     Mod+Return         repeat=false       { spawn "kitty"; }
+    Mod+Shift+Return   repeat=false       { spawn-sh "kitty --class claude-popup -d ~ -o window_padding_width=16 sh -c 'claude --continue || claude'"; }
     Mod+Ctrl+Return    repeat=false       { spawn-sh "pkill wofi || wofi --show drun"; }
     Super+L            repeat=false       { spawn "hyprlock"; }
     Mod+Tab            repeat=false       { toggle-overview; }
