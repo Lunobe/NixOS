@@ -281,6 +281,12 @@
     };
   };
 
+  services.sunshine = {
+    enable = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
   services.wivrn = {
     enable = true;
     openFirewall = true;
