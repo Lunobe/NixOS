@@ -25,6 +25,7 @@
     libnotify
     mangohud
     miru
+    moonlight-qt
     mpv
     nautilus
     nerd-fonts.jetbrains-mono
