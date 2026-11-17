@@ -137,7 +137,7 @@ binds {
 
     Mod+Return         repeat=false       { spawn "kitty"; }
     Mod+Shift+Return   repeat=false       { spawn-sh "kitty --class claude-popup -d ~ -o window_padding_width=16 sh -c 'claude --continue || claude'"; }
-    Mod+Ctrl+Return    repeat=false       { spawn-sh "pkill wofi || wofi --show drun"; }
+    Mod+Ctrl+Return    repeat=false       { spawn-sh "pkill wofi || wofi --show drun --matching fuzzy"; }
     Super+L            repeat=false       { spawn "hyprlock"; }
     Mod+Tab            repeat=false       { toggle-overview; }
     Mod+Q              repeat=false       { close-window; }
