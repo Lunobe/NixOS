@@ -10,6 +10,7 @@
     btrfs-assistant
     chromium
     claude-code
+    copyq
     discord
     easyeffects
     fastfetch

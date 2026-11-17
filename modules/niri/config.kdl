@@ -76,6 +76,7 @@ spawn-at-startup "niri-layout-osd"
 spawn-at-startup "miru-daemon"
 spawn-at-startup "awww-daemon"
 spawn-at-startup "awww-daemon" "-n" "backdrop"
+spawn-at-startup "copyq" "--start-server"
 
 layer-rule {
     match namespace="^awww-daemonbackdrop$"
@@ -106,6 +107,11 @@ window-rule {
 
     // Use this instead if you want them visible on third-party screenshot tools.
     // block-out-from "screencast"
+}
+
+window-rule {
+    match app-id=r#"^com\.github\.hluk\.copyq$"#
+    open-floating true
 }
 
 window-rule {
@@ -141,6 +147,7 @@ binds {
     Mod+E              repeat=false       { spawn "nautilus"; }
     Mod+P              repeat=false       { spawn "pavucontrol"; }
     Mod+Alt+Z          repeat=false       { spawn "miructl" "toggle"; }
+    Mod+Ctrl+V         repeat=false       { spawn "copyq" "toggle"; }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
