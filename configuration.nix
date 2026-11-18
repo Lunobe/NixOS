@@ -244,6 +244,9 @@
 
   virtualisation.vmware.host.enable = true;
 
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
   # --- programs ---
 
   systemd.tmpfiles.rules = [
@@ -349,7 +352,7 @@
     shell = pkgs.fish;
     description = "Lunobe";
     hashedPasswordFile = config.age.secrets.userPassword.path;
-    extraGroups = ["networkmanager" "wheel" "docker"];
+    extraGroups = ["networkmanager" "wheel" "docker" "libvirtd"];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB6HS+1ewVfU4Mm+L68yT4TdxhJQSWKiRCXHIXUvA87E u0_a554@localhost"
     ];
