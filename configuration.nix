@@ -156,6 +156,31 @@
   networking.hostName = hostName;
   networking.networkmanager.enable = true;
 
+  # Bridge br0 over eno1 so VMs (virt-manager → "Bridge device: br0") get an IP
+  # straight from the home router instead of libvirt NAT.
+  networking.networkmanager.ensureProfiles.profiles = {
+    br0 = {
+      connection = {
+        id = "br0";
+        type = "bridge";
+        interface-name = "br0";
+        autoconnect-slaves = 1;
+      };
+      bridge.stp = false;
+      ipv4.method = "auto";
+      ipv6.method = "auto";
+    };
+    br0-eno1 = {
+      connection = {
+        id = "br0-eno1";
+        type = "ethernet";
+        interface-name = "eno1";
+        master = "br0";
+        slave-type = "bridge";
+      };
+    };
+  };
+
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
