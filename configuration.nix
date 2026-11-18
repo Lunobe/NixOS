@@ -267,6 +267,15 @@
     };
   };
 
+  # Docker loads br_netfilter, which makes the host firewall filter bridged VM
+  # traffic (breaks inbound to the malware-lab VMs, and the host sees their packets).
+  boot.kernelModules = ["br_netfilter"];
+  boot.kernel.sysctl = {
+    "net.bridge.bridge-nf-call-iptables" = 0;
+    "net.bridge.bridge-nf-call-ip6tables" = 0;
+    "net.bridge.bridge-nf-call-arptables" = 0;
+  };
+
   virtualisation.vmware.host.enable = true;
 
   virtualisation.libvirtd.enable = true;
