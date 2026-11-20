@@ -339,6 +339,31 @@ else
   sudo nixos-rebuild switch --flake "$TARGET#nixos" --option experimental-features "nix-command flakes"
 fi
 
+step "Malware lab VMs"
+cat <<'EOF'
+The libvirt network and both VM definitions (malware-gw, malware-win11) come
+with the system config. The VM disks, UEFI NVRAM, TPM state and snapshots are
+too large or too stateful for Nix: they live in the restic bundle on R2 (same
+bucket and credentials as `nx vm`), restored by `lab-bundle pull`.
+EOF
+if [ "$FRESH_INSTALL" = true ]; then
+  echo "The R2 secrets only decrypt on a booted system — after the first boot run: sudo lab-bundle pull"
+elif [ -x /run/current-system/sw/bin/lab-bundle ]; then
+  read -rp "Restore the VM disks, NVRAM and TPM state from the bundle now (tens of GB)? [y/N] " RESTORE_LAB
+  case "$RESTORE_LAB" in
+    y|Y|yes|Yes|YES) sudo /run/current-system/sw/bin/lab-bundle pull ;;
+    *) echo "Skipped — run later: sudo lab-bundle pull" ;;
+  esac
+else
+  echo "lab-bundle is not installed on this system — skipping."
+fi
+cat <<'EOF'
+Not automatable, check by hand: UEFI "Integrated Graphics" enabled and IOMMU on;
+router DHCP reservations for the host (10.100.102.11) and the gateway WAN MAC
+52:54:00:f5:1b:0e (10.100.102.14); after pulling the bundle, hold the first
+VM start until the host has been rebooted once (the iGPU must be clean).
+EOF
+
 NIX_STORE_REMOUNTED_RW=false
 if [ "$FRESH_INSTALL" = true ]; then
   step "Recompressing existing data with zstd"

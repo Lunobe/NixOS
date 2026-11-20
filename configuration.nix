@@ -10,6 +10,7 @@
 }: {
   imports = [
     ./hardware-configuration.nix
+    ./modules/malware-lab
   ];
 
   # --- nix ---
@@ -71,7 +72,7 @@
     });
   });
   boot.consoleLogLevel = 0;
-  boot.kernelParams = ["quiet" "udev.log_level=3" "vfio-pci.ids=1002:164e,1002:1640"];
+  boot.kernelParams = ["quiet" "udev.log_level=3"];
   systemd.settings.Manager.ShowStatus = false;
 
   # --- store cleanup ---
@@ -267,47 +268,9 @@
     };
   };
 
-  # Docker loads br_netfilter, which makes the host firewall filter bridged VM
-  # traffic (breaks inbound to the malware-lab VMs, and the host sees their packets).
-  boot.kernelModules = ["br_netfilter"];
-  boot.kernel.sysctl = {
-    "net.bridge.bridge-nf-call-iptables" = 0;
-    "net.bridge.bridge-nf-call-ip6tables" = 0;
-    "net.bridge.bridge-nf-call-arptables" = 0;
-  };
-
   virtualisation.vmware.host.enable = true;
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.libvirtd.qemu.swtpm.enable = true;
-  virtualisation.libvirtd.onShutdown = "shutdown";
-  virtualisation.libvirtd.hooks.qemu.igpu-reset = pkgs.writeShellScript "igpu-reset" ''
-    export PATH=${lib.makeBinPath [pkgs.coreutils pkgs.util-linux]}
-    [ "$1" = malware-win11 ] && [ "$2" = release ] && [ "$3" = end ] || exit 0
-    gpu=0000:0d:00.0
-    audio=0000:0d:00.1
-    rebind() {
-      dev=/sys/bus/pci/devices/$1
-      [ -e $dev/driver ] && echo $1 > $dev/driver/unbind
-      echo $2 > $dev/driver_override
-      echo $1 > /sys/bus/pci/drivers_probe
-    }
-    rebind $gpu amdgpu
-    for _ in $(seq 30); do
-      [ "$(basename "$(readlink /sys/bus/pci/devices/$gpu/driver)")" = amdgpu ] && break
-      sleep 1
-    done
-    sleep 3
-    rebind $gpu vfio-pci
-    rebind $audio vfio-pci
-    logger -t igpu-reset "iGPU now on $(basename "$(readlink /sys/bus/pci/devices/$gpu/driver)")"
-  '';
-  # amdgpu init resets the iGPU between guest runs; keep it out of the desktop seat meanwhile
-  services.udev.extraRules = ''
-    SUBSYSTEM=="drm", KERNELS=="0000:0d:00.0", TAG-="seat", TAG-="master-of-seat", TAG-="uaccess", ENV{ID_SEAT}="seat-igpu"
-  '';
-  # iGPU (and its HDMI audio) is passed through to malware-win11
-  boot.initrd.kernelModules = ["vfio_pci" "vfio" "vfio_iommu_type1"];
+  malwareLab.enable = true;
   programs.virt-manager.enable = true;
 
   # --- programs ---
