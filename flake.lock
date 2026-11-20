@@ -84,11 +84,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795171450,
-        "narHash": "sha256-KTZ4HSd2i0TTdxSeoDDnBiHnaDouH1pd1eKyDYTPmt8=",
+        "lastModified": 1795172497,
+        "narHash": "sha256-h/DmcCXKD+V27l6SIVnSGP6zBV7SndFZOoHjPYUpLns=",
         "owner": "Lunobe",
         "repo": "Nx",
-        "rev": "4034b41e47d9e09075169439e0c706038daf6deb",
+        "rev": "76ea823c6bfad43664057a8f189927a1dc5a1009",
         "type": "github"
       },
       "original": {
