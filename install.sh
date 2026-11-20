@@ -343,24 +343,25 @@ step "Malware lab VMs"
 cat <<'EOF'
 The libvirt network and both VM definitions (malware-gw, malware-win11) come
 with the system config. The VM disks, UEFI NVRAM, TPM state and snapshots are
-too large or too stateful for Nix: they live in the restic bundle on R2 (same
-bucket and credentials as `nx vm`), restored by `lab-bundle pull`.
+too large or too stateful for Nix: `nx vm` keeps them in the same restic backup
+on R2 as ~/vmware, and `nx vm pull` restores both (needs an nx revision with
+lab support in flake.lock).
 EOF
 if [ "$FRESH_INSTALL" = true ]; then
-  echo "The R2 secrets only decrypt on a booted system — after the first boot run: sudo lab-bundle pull"
-elif [ -x /run/current-system/sw/bin/lab-bundle ]; then
-  read -rp "Restore the VM disks, NVRAM and TPM state from the bundle now (tens of GB)? [y/N] " RESTORE_LAB
-  case "$RESTORE_LAB" in
-    y|Y|yes|Yes|YES) sudo /run/current-system/sw/bin/lab-bundle pull ;;
-    *) echo "Skipped — run later: sudo lab-bundle pull" ;;
+  echo "The R2 secrets only decrypt on a booted system — after the first boot run: nx vm pull"
+elif command -v fish >/dev/null 2>&1; then
+  read -rp "Restore ~/vmware and the malware-lab VMs from the latest R2 backup now (tens of GB)? [y/N] " RESTORE_VMS
+  case "$RESTORE_VMS" in
+    y|Y|yes|Yes|YES) fish -c 'nx vm pull' ;;
+    *) echo "Skipped — run later: nx vm pull" ;;
   esac
 else
-  echo "lab-bundle is not installed on this system — skipping."
+  echo "fish is not available — run later: nx vm pull"
 fi
 cat <<'EOF'
 Not automatable, check by hand: UEFI "Integrated Graphics" enabled and IOMMU on;
 router DHCP reservations for the host (10.100.102.11) and the gateway WAN MAC
-52:54:00:f5:1b:0e (10.100.102.14); after pulling the bundle, hold the first
+52:54:00:f5:1b:0e (10.100.102.14); after the restore, hold the first
 VM start until the host has been rebooted once (the iGPU must be clean).
 EOF
 
