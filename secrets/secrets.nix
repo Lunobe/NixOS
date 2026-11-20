@@ -17,5 +17,4 @@ in {
   "r2-credentials.age".publicKeys = [lunobe];
   "restic-password.age".publicKeys = [lunobe];
   "gh-token.age".publicKeys = [lunobe];
-  "sunshine-creds.age".publicKeys = [lunobe];
 }

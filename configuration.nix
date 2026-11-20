@@ -10,7 +10,6 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ./modules/malware-lab
   ];
 
   # --- nix ---
@@ -157,31 +156,6 @@
   networking.hostName = hostName;
   networking.networkmanager.enable = true;
 
-  # Bridge br0 over eno1 so VMs (virt-manager → "Bridge device: br0") get an IP
-  # straight from the home router instead of libvirt NAT.
-  networking.networkmanager.ensureProfiles.profiles = {
-    br0 = {
-      connection = {
-        id = "br0";
-        type = "bridge";
-        interface-name = "br0";
-        autoconnect-slaves = 1;
-      };
-      bridge.stp = false;
-      ipv4.method = "auto";
-      ipv6.method = "auto";
-    };
-    br0-eno1 = {
-      connection = {
-        id = "br0-eno1";
-        type = "ethernet";
-        interface-name = "eno1";
-        master = "br0";
-        slave-type = "bridge";
-      };
-    };
-  };
-
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
@@ -269,9 +243,6 @@
   };
 
   virtualisation.vmware.host.enable = true;
-
-  malwareLab.enable = true;
-  programs.virt-manager.enable = true;
 
   # --- programs ---
 
@@ -378,7 +349,7 @@
     shell = pkgs.fish;
     description = "Lunobe";
     hashedPasswordFile = config.age.secrets.userPassword.path;
-    extraGroups = ["networkmanager" "wheel" "docker" "libvirtd"];
+    extraGroups = ["networkmanager" "wheel" "docker"];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB6HS+1ewVfU4Mm+L68yT4TdxhJQSWKiRCXHIXUvA87E u0_a554@localhost"
     ];

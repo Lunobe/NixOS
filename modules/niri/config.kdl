@@ -258,7 +258,3 @@ binds {
 
     Mod+Shift+P { power-off-monitors; }
 }
-
-debug {
-    ignore-drm-device "/dev/dri/by-path/pci-0000:0d:00.0-card"
-}
