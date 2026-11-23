@@ -1,0 +1,3 @@
+[server]
+# measured from the top edge: 0.7 = 0.3 up from the bottom
+top_margin = 0.7

@@ -1,0 +1,44 @@
+# -- nix build output --
+
+/result
+
+# -- claude code --
+
+/CLAUDE.md
+
+# -- nx nuke-history backups --
+
+.git-backups/
+
+# -- obs-studio --
+# deny-by-default: OBS and its plugins write plenty of runtime-only files
+# here (logs, cache, secrets, machine-specific state); only the entries
+# explicitly un-ignored below are meant to be tracked. Un-ignoring a
+# directory only stops git from skipping it — it does NOT un-ignore its
+# contents, so each level that has both tracked and untracked children
+# needs its own "deny again, then re-allow" pair.
+
+modules/obs-studio/*
+!modules/obs-studio/basic/
+!modules/obs-studio/global.ini
+!modules/obs-studio/plugin_config/
+!modules/obs-studio/plugin_manager/
+
+modules/obs-studio/basic/*
+!modules/obs-studio/basic/scenes/
+!modules/obs-studio/basic/profiles/
+
+modules/obs-studio/basic/scenes/*
+!modules/obs-studio/basic/scenes/*.json
+
+# basic/profiles/ is left fully open below this point — profile
+# directories are tracked wholesale, not file-by-file
+
+modules/obs-studio/plugin_config/*
+!modules/obs-studio/plugin_config/rtmp-services/
+
+modules/obs-studio/plugin_config/rtmp-services/*
+!modules/obs-studio/plugin_config/rtmp-services/*.json
+
+modules/obs-studio/plugin_manager/*
+!modules/obs-studio/plugin_manager/modules.json

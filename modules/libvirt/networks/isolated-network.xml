@@ -1,0 +1,8 @@
+<network>
+  <name>isolated-network</name>
+  <uuid>eb040a47-8cfe-4f4f-865b-cf1126d9bc30</uuid>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <mac address='52:54:00:85:e8:08'/>
+  <domain name=''/>
+</network>
+
