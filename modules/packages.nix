@@ -63,5 +63,6 @@
     xrizer
     xwayland-satellite
     llama-cpp-vulkan
+    python3Packages.huggingface-hub
   ];
 }
