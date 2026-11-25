@@ -130,7 +130,6 @@ window-rule {
 binds {
     // Overlay doesn't fit 1080p with every bind listed, so aliases and pairs share one row.
     Mod+Slash       hotkey-overlay-title="Показать это меню" { show-hotkey-overlay; }
-    Mod+Shift+Slash hotkey-overlay-title=null { show-hotkey-overlay; }
 
     // Escape hatch: forcibly toggle the active keyboard-shortcuts-inhibitor
     // (e.g. VMware/VirtualBox/remote-desktop clients holding an X11 keyboard grab).
