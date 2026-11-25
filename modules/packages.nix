@@ -62,5 +62,6 @@
     xivlauncher
     xrizer
     xwayland-satellite
+    llama-cpp-vulkan
   ];
 }
