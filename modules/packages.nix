@@ -21,9 +21,11 @@
     impression
     iperf3
     jdk21
+    jq
     kdePackages.kate
     kdePackages.kdenlive
     libnotify
+    llama-cpp-vulkan
     mangohud
     miru
     moonlight-qt
@@ -31,8 +33,9 @@
     nautilus
     nerd-fonts.jetbrains-mono
     nmap
-    obsidian
     obs-studio
+    obsidian
+    opencode
     opencomposite
     pavucontrol
     pay-respects
@@ -40,6 +43,7 @@
     protonup-qt
     pulseaudio
     python3
+    python3Packages.huggingface-hub
     pywal
     qbittorrent
     rar
@@ -62,8 +66,5 @@
     xivlauncher
     xrizer
     xwayland-satellite
-    llama-cpp-vulkan
-    python3Packages.huggingface-hub
-    jq
   ];
 }

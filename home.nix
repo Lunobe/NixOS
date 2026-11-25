@@ -92,6 +92,20 @@
       swayosd-client --custom-message "$(jq -r .description <<<"$next")" --custom-icon "$icon"
     '';
   };
+
+  # --n-cpu-moe 36 keeps the non-expert layers within the RX 9070 XT's 16 GB;
+  # raise it on VRAM OOM, lower it while VRAM stays free. No --load-mode none:
+  # on radv it fails with "Not enough memory for command submission".
+  llm = pkgs.writeShellApplication {
+    name = "llm";
+    runtimeInputs = [pkgs.llama-cpp-vulkan];
+    text = ''
+      model=''${LLM_MODEL:-$HOME/models/huihui-ai_Qwen3-Coder-Next-abliterated-IQ4_XS.gguf}
+      exec llama-server -m "$model" \
+        -ngl 99 --n-cpu-moe 36 -c 65536 -np 1 -fa on --jinja \
+        --host 127.0.0.1 --port 8080 --api-key local "$@"
+    '';
+  };
 in {
   imports = [
     ./modules/packages.nix
@@ -345,7 +359,7 @@ in {
     force = true;
   };
 
-  home.packages = [niriWalTheme niriLayoutOsd audioSinkCycle];
+  home.packages = [niriWalTheme niriLayoutOsd audioSinkCycle llm];
 
   home.activation.applyNiriWalTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run ${niriWalTheme}/bin/niri-wal-theme || true
@@ -379,6 +393,13 @@ in {
       fi
     fi
   '';
+
+  # --- opencode ---
+
+  xdg.configFile."opencode/opencode.json" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${repoDir}/modules/opencode/opencode.json";
+    force = true;
+  };
 
   # --- swaync ---
 
