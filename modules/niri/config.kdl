@@ -146,6 +146,7 @@ binds {
     Mod+Ctrl+Shift+W   repeat=false       { spawn "waypaper"; }
     Mod+E              repeat=false       { spawn "nautilus"; }
     Mod+P              repeat=false       { spawn "pavucontrol"; }
+    Mod+Ctrl+P         repeat=false       { spawn "audio-sink-cycle"; }
     Mod+Alt+Z          repeat=false       { spawn "miructl" "toggle"; }
     Mod+Ctrl+V         repeat=false       { spawn "copyq" "toggle"; }
 

@@ -65,6 +65,33 @@
       done
     '';
   };
+
+  audioSinkCycle = pkgs.writeShellApplication {
+    name = "audio-sink-cycle";
+    runtimeInputs = [pkgs.pulseaudio pkgs.jq pkgs.swayosd];
+    text = ''
+      sinks=$(pactl -f json list sinks | jq -c '[.[]
+        | select((.active_port as $p | .ports | map(select(.name == $p))[0].availability) != "not available")
+        | {name, description, headset: ((.properties["device.form_factor"] // "") | test("head"))}]')
+      count=$(jq length <<<"$sinks")
+      [ "$count" -gt 0 ] || exit 0
+
+      current=$(pactl get-default-sink)
+      idx=$(jq --arg c "$current" 'map(.name) | index($c) // -1' <<<"$sinks")
+      next=$(jq -c ".[$(((idx + 1) % count))]" <<<"$sinks")
+      name=$(jq -r .name <<<"$next")
+
+      pactl set-default-sink "$name"
+      # Streams pinned to the old sink don't follow the default on their own.
+      pactl list short sink-inputs | cut -f1 | while read -r input; do
+        pactl move-sink-input "$input" "$name" || true
+      done
+
+      icon=audio-speakers-symbolic
+      [ "$(jq -r .headset <<<"$next")" = true ] && icon=audio-headphones-symbolic
+      swayosd-client --custom-message "$(jq -r .description <<<"$next")" --custom-icon "$icon"
+    '';
+  };
 in {
   imports = [
     ./modules/packages.nix
@@ -318,7 +345,7 @@ in {
     force = true;
   };
 
-  home.packages = [niriWalTheme niriLayoutOsd];
+  home.packages = [niriWalTheme niriLayoutOsd audioSinkCycle];
 
   home.activation.applyNiriWalTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run ${niriWalTheme}/bin/niri-wal-theme || true
