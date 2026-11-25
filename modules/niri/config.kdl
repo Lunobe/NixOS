@@ -126,52 +126,55 @@ window-rule {
     clip-to-geometry true
 }
 
+
 binds {
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    // Overlay doesn't fit 1080p with every bind listed, so aliases and pairs share one row.
+    Mod+Slash       hotkey-overlay-title="Показать это меню" { show-hotkey-overlay; }
+    Mod+Shift+Slash hotkey-overlay-title=null { show-hotkey-overlay; }
 
     // Escape hatch: forcibly toggle the active keyboard-shortcuts-inhibitor
     // (e.g. VMware/VirtualBox/remote-desktop clients holding an X11 keyboard grab).
     // allow-inhibiting=false makes niri process this bind even while a client
     // is currently inhibiting shortcuts, so it can never hold the session hostage.
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Escape allow-inhibiting=false hotkey-overlay-title="Вкл/выкл перехват клавиш приложением" { toggle-keyboard-shortcuts-inhibit; }
 
-    Mod+Return         repeat=false       { spawn "kitty"; }
-    Mod+Shift+Return   repeat=false       { spawn-sh "kitty --class claude-popup -d ~ -o window_padding_width=16 sh -c 'claude --continue || claude'"; }
-    Mod+Ctrl+Return    repeat=false       { spawn-sh "pkill wofi || wofi --show drun --matching fuzzy"; }
-    Super+L            repeat=false       { spawn "hyprlock"; }
-    Mod+Tab            repeat=false       { toggle-overview; }
-    Mod+Q              repeat=false       { close-window; }
-    Mod+B              repeat=false       { spawn "firefox"; }
-    Mod+Shift+W        repeat=false       { spawn "waypaper" "--random"; }
-    Mod+Ctrl+Shift+W   repeat=false       { spawn "waypaper"; }
-    Mod+E              repeat=false       { spawn "nautilus"; }
-    Mod+P              repeat=false       { spawn "pavucontrol"; }
-    Mod+Ctrl+P         repeat=false       { spawn "audio-sink-cycle"; }
-    Mod+Ctrl+Equal                        { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "+5"; }
-    Mod+Ctrl+Minus                        { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "-5"; }
-    Mod+Ctrl+KP_Add                       { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "+5"; }
-    Mod+Ctrl+KP_Subtract                  { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "-5"; }
-    Mod+Alt+Z          repeat=false       { spawn "miructl" "toggle"; }
-    Mod+Ctrl+V         repeat=false       { spawn "copyq" "toggle"; }
+    Mod+Return         repeat=false hotkey-overlay-title="Терминал (kitty)" { spawn "kitty"; }
+    Mod+Shift+Return   repeat=false hotkey-overlay-title="Claude Code во всплывающем окне" { spawn-sh "kitty --class claude-popup -d ~ -o window_padding_width=16 sh -c 'claude --continue || claude'"; }
+    Mod+Ctrl+Return    repeat=false hotkey-overlay-title="Запуск приложений (wofi)" { spawn-sh "pkill wofi || wofi --show drun --matching fuzzy"; }
+    Super+L            repeat=false hotkey-overlay-title="Заблокировать экран" { spawn "hyprlock"; }
+    Mod+Tab            repeat=false hotkey-overlay-title="Обзор окон и рабочих столов" { toggle-overview; }
+    Mod+Q              repeat=false hotkey-overlay-title="Закрыть окно" { close-window; }
+    Mod+B              repeat=false hotkey-overlay-title="Браузер (Firefox)" { spawn "firefox"; }
+    Mod+Shift+W        repeat=false hotkey-overlay-title="Случайные обои" { spawn "waypaper" "--random"; }
+    Mod+Ctrl+Shift+W   repeat=false hotkey-overlay-title="Выбор обоев (waypaper)" { spawn "waypaper"; }
+    Mod+E              repeat=false hotkey-overlay-title="Файловый менеджер (Nautilus)" { spawn "nautilus"; }
+    Mod+P              repeat=false hotkey-overlay-title="Микшер громкости (pavucontrol)" { spawn "pavucontrol"; }
+    Mod+Ctrl+P         repeat=false hotkey-overlay-title="Следующее устройство вывода звука" { spawn "audio-sink-cycle"; }
+    Mod+Ctrl+Equal     hotkey-overlay-title="Громкость +5% / −5% (Mod+Ctrl+= / −)" { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "+5"; }
+    Mod+Ctrl+Minus     hotkey-overlay-title=null { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "-5"; }
+    Mod+Ctrl+KP_Add      hotkey-overlay-title=null { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "+5"; }
+    Mod+Ctrl+KP_Subtract hotkey-overlay-title=null { spawn "swayosd-client" "--max-volume" "150" "--output-volume" "-5"; }
+    Mod+Alt+Z          repeat=false hotkey-overlay-title="Вкл/выкл miru" { spawn "miructl" "toggle"; }
+    Mod+Ctrl+V         repeat=false hotkey-overlay-title="История буфера обмена (CopyQ)" { spawn "copyq" "toggle"; }
 
-    Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
-    Mod+Right { focus-column-right; }
+    Mod+Left  hotkey-overlay-title="Фокус влево / вправо (Mod+Left / Right, Mod+Shift+колесо)" { focus-column-left; }
+    Mod+Down  hotkey-overlay-title="Фокус вниз / вверх (Mod+Down / Up)" { focus-window-down; }
+    Mod+Up    hotkey-overlay-title=null { focus-window-up; }
+    Mod+Right hotkey-overlay-title=null { focus-column-right; }
 
-    Mod+Ctrl+Left  { move-column-left; }
-    Mod+Ctrl+Down  { move-window-down; }
-    Mod+Ctrl+Up    { move-window-up; }
-    Mod+Ctrl+Right { move-column-right; }
-    Mod+Ctrl+H     { move-column-left; }
-    Mod+Ctrl+J     { move-window-down; }
-    Mod+Ctrl+K     { move-window-up; }
-    Mod+Ctrl+L     { move-column-right; }
+    Mod+Ctrl+Left  hotkey-overlay-title="Сдвинуть колонку влево / вправо (+Left / Right, H / L, Shift+колесо)" { move-column-left; }
+    Mod+Ctrl+Down  hotkey-overlay-title="Сдвинуть окно вниз / вверх (+Down / Up, J / K)" { move-window-down; }
+    Mod+Ctrl+Up    hotkey-overlay-title=null { move-window-up; }
+    Mod+Ctrl+Right hotkey-overlay-title=null { move-column-right; }
+    Mod+Ctrl+H     hotkey-overlay-title=null { move-column-left; }
+    Mod+Ctrl+J     hotkey-overlay-title=null { move-window-down; }
+    Mod+Ctrl+K     hotkey-overlay-title=null { move-window-up; }
+    Mod+Ctrl+L     hotkey-overlay-title=null { move-column-right; }
 
-    Mod+Home { focus-column-first; }
-    Mod+End  { focus-column-last; }
-    Mod+Ctrl+Home { move-column-to-first; }
-    Mod+Ctrl+End  { move-column-to-last; }
+    Mod+Home      hotkey-overlay-title="Фокус на первую / последнюю колонку (Mod+Home / End)" { focus-column-first; }
+    Mod+End       hotkey-overlay-title=null { focus-column-last; }
+    Mod+Ctrl+Home hotkey-overlay-title="Колонку в начало / конец (Mod+Ctrl+Home / End)" { move-column-to-first; }
+    Mod+Ctrl+End  hotkey-overlay-title=null { move-column-to-last; }
 
     //   When buy second monitor
 
@@ -192,74 +195,74 @@ binds {
     //Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
     //Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
 
-    Mod+Page_Down      { focus-workspace-down; }
-    Mod+Page_Up        { focus-workspace-up; }
-    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
-    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
-    Mod+Ctrl+U         { move-column-to-workspace-down; }
-    Mod+Ctrl+I         { move-column-to-workspace-up; }
-    Mod+Shift+Page_Down { move-workspace-down; }
-    Mod+Shift+Page_Up   { move-workspace-up; }
+    Mod+Page_Down       hotkey-overlay-title="Рабочий стол ниже / выше (Page Down / Up, Mod+колесо)" { focus-workspace-down; }
+    Mod+Page_Up         hotkey-overlay-title=null { focus-workspace-up; }
+    Mod+Ctrl+Page_Down  hotkey-overlay-title="Колонку на стол ниже / выше (Page Down / Up, U / I, колесо)" { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up    hotkey-overlay-title=null { move-column-to-workspace-up; }
+    Mod+Ctrl+U          hotkey-overlay-title=null { move-column-to-workspace-down; }
+    Mod+Ctrl+I          hotkey-overlay-title=null { move-column-to-workspace-up; }
+    Mod+Shift+Page_Down hotkey-overlay-title="Переместить рабочий стол вниз / вверх (Page Down / Up)" { move-workspace-down; }
+    Mod+Shift+Page_Up   hotkey-overlay-title=null { move-workspace-up; }
 
-    Mod+WheelScrollDown            { focus-workspace-down; }
-    Mod+WheelScrollUp              { focus-workspace-up; }
-    Mod+Ctrl+WheelScrollDown       { move-column-to-workspace-down; }
-    Mod+Ctrl+WheelScrollUp         { move-column-to-workspace-up; }
-    Mod+Shift+WheelScrollDown      { focus-column-right; }
-    Mod+Shift+WheelScrollUp        { focus-column-left; }
-    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
-    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+    Mod+WheelScrollDown            hotkey-overlay-title=null { focus-workspace-down; }
+    Mod+WheelScrollUp              hotkey-overlay-title=null { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown       hotkey-overlay-title=null { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp         hotkey-overlay-title=null { move-column-to-workspace-up; }
+    Mod+Shift+WheelScrollDown      hotkey-overlay-title=null { focus-column-right; }
+    Mod+Shift+WheelScrollUp        hotkey-overlay-title=null { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown hotkey-overlay-title=null { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   hotkey-overlay-title=null { move-column-left; }
 
-    Mod+1 { focus-workspace 1; }
-    Mod+2 { focus-workspace 2; }
-    Mod+3 { focus-workspace 3; }
-    Mod+4 { focus-workspace 4; }
-    Mod+5 { focus-workspace 5; }
-    Mod+6 { focus-workspace 6; }
-    Mod+7 { focus-workspace 7; }
-    Mod+8 { focus-workspace 8; }
-    Mod+9 { focus-workspace 9; }
-    Mod+Ctrl+1 { move-column-to-workspace 1; }
-    Mod+Ctrl+2 { move-column-to-workspace 2; }
-    Mod+Ctrl+3 { move-column-to-workspace 3; }
-    Mod+Ctrl+4 { move-column-to-workspace 4; }
-    Mod+Ctrl+5 { move-column-to-workspace 5; }
-    Mod+Ctrl+6 { move-column-to-workspace 6; }
-    Mod+Ctrl+7 { move-column-to-workspace 7; }
-    Mod+Ctrl+8 { move-column-to-workspace 8; }
-    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    Mod+1 hotkey-overlay-title="Перейти на рабочий стол 1…9 (Mod+1…9)" { focus-workspace 1; }
+    Mod+2 hotkey-overlay-title=null { focus-workspace 2; }
+    Mod+3 hotkey-overlay-title=null { focus-workspace 3; }
+    Mod+4 hotkey-overlay-title=null { focus-workspace 4; }
+    Mod+5 hotkey-overlay-title=null { focus-workspace 5; }
+    Mod+6 hotkey-overlay-title=null { focus-workspace 6; }
+    Mod+7 hotkey-overlay-title=null { focus-workspace 7; }
+    Mod+8 hotkey-overlay-title=null { focus-workspace 8; }
+    Mod+9 hotkey-overlay-title=null { focus-workspace 9; }
+    Mod+Ctrl+1 hotkey-overlay-title="Колонку на рабочий стол 1…9 (Mod+Ctrl+1…9)" { move-column-to-workspace 1; }
+    Mod+Ctrl+2 hotkey-overlay-title=null { move-column-to-workspace 2; }
+    Mod+Ctrl+3 hotkey-overlay-title=null { move-column-to-workspace 3; }
+    Mod+Ctrl+4 hotkey-overlay-title=null { move-column-to-workspace 4; }
+    Mod+Ctrl+5 hotkey-overlay-title=null { move-column-to-workspace 5; }
+    Mod+Ctrl+6 hotkey-overlay-title=null { move-column-to-workspace 6; }
+    Mod+Ctrl+7 hotkey-overlay-title=null { move-column-to-workspace 7; }
+    Mod+Ctrl+8 hotkey-overlay-title=null { move-column-to-workspace 8; }
+    Mod+Ctrl+9 hotkey-overlay-title=null { move-column-to-workspace 9; }
 
-    Mod+BracketLeft  { consume-or-expel-window-left; }
-    Mod+BracketRight { consume-or-expel-window-right; }
-    Mod+Comma  { consume-window-into-column; }
-    Mod+Period { expel-window-from-column; }
-    Mod+R { switch-preset-column-width; }
+    Mod+BracketLeft  hotkey-overlay-title="Вобрать/вытолкнуть окно влево / вправо ([ / ])" { consume-or-expel-window-left; }
+    Mod+BracketRight hotkey-overlay-title=null { consume-or-expel-window-right; }
+    Mod+Comma        hotkey-overlay-title="Вобрать окно в колонку / вытолкнуть (Mod+, / .)" { consume-window-into-column; }
+    Mod+Period       hotkey-overlay-title=null { expel-window-from-column; }
+    Mod+R            hotkey-overlay-title="Следующая предустановленная ширина колонки" { switch-preset-column-width; }
 
-    Mod+Ctrl+Shift+R { switch-preset-window-height; }
-    Mod+Ctrl+R { reset-window-height; }
+    Mod+Ctrl+Shift+R hotkey-overlay-title="Следующая предустановленная высота окна" { switch-preset-window-height; }
+    Mod+Ctrl+R       hotkey-overlay-title="Сбросить высоту окна" { reset-window-height; }
 
-    Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
-    Mod+M { maximize-window-to-edges; }
-    Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+F       hotkey-overlay-title="Развернуть колонку" { maximize-column; }
+    Mod+Shift+F hotkey-overlay-title="Полный экран" { fullscreen-window; }
+    Mod+M       hotkey-overlay-title="Развернуть окно до краёв" { maximize-window-to-edges; }
+    Mod+Ctrl+F  hotkey-overlay-title="Растянуть колонку на свободное место" { expand-column-to-available-width; }
 
-    Mod+C { center-column; }
+    Mod+C hotkey-overlay-title="Центрировать колонку" { center-column; }
 
-    Mod+Minus { set-column-width "-10%"; }
-    Mod+Equal { set-column-width "+10%"; }
-    Mod+Shift+Minus { set-window-height "-10%"; }
-    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Minus       hotkey-overlay-title=null { set-column-width "-10%"; }
+    Mod+Equal       hotkey-overlay-title="Ширина колонки +10% / −10% (Mod+= / −)" { set-column-width "+10%"; }
+    Mod+Shift+Minus hotkey-overlay-title=null { set-window-height "-10%"; }
+    Mod+Shift+Equal hotkey-overlay-title="Высота окна +10% / −10% (Mod+Shift+= / −)" { set-window-height "+10%"; }
 
-    Mod+V       { toggle-window-floating; }
-    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+    Mod+V       hotkey-overlay-title="Плавающее/тайловое окно" { toggle-window-floating; }
+    Mod+Shift+V hotkey-overlay-title="Фокус: плавающие ↔ тайловые" { switch-focus-between-floating-and-tiling; }
 
-    Mod+W { toggle-column-tabbed-display; }
+    Mod+W hotkey-overlay-title="Вкладки в колонке вкл/выкл" { toggle-column-tabbed-display; }
 
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    Print      hotkey-overlay-title="Скриншот: область / экран / окно (PrtSc, Ctrl+, Alt+)" { screenshot; }
+    Ctrl+Print hotkey-overlay-title=null { screenshot-screen; }
+    Alt+Print  hotkey-overlay-title=null { screenshot-window; }
 
-    Mod+Shift+E { quit; }
+    Mod+Shift+E hotkey-overlay-title="Выйти из niri" { quit; }
 
-    Mod+Shift+P { power-off-monitors; }
+    Mod+Shift+P hotkey-overlay-title="Выключить мониторы" { power-off-monitors; }
 }
