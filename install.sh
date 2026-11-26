@@ -202,6 +202,18 @@ if [ -z "$USERNAME" ]; then
   exit 1
 fi
 
+step "Host"
+# no default: picking the wrong host would install another machine's
+# hardware/driver config
+mapfile -t HOSTS < <(find "$TARGET/hosts" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+echo "Hosts in this repo (hosts/<name>, also used as the hostname): ${HOSTS[*]}"
+while true; do
+  read -rp "Which host is this machine? " HOST
+  [ -n "$HOST" ] && [ -f "$TARGET/hosts/$HOST/default.nix" ] && break
+  echo "No hosts/$HOST/default.nix — pick one of: ${HOSTS[*]}" >&2
+done
+HW_CONFIG="$TARGET/hosts/$HOST/hardware-configuration.nix"
+
 step "Btrfs subvolumes for snapshots"
 if [ -z "${BTRFS_PART_INPUT+x}" ]; then
   cat <<'EOF'
@@ -264,8 +276,8 @@ NIXOS_GENERATE_CONFIG_ARGS=()
 if [ -n "$ROOT_PREFIX" ]; then
   NIXOS_GENERATE_CONFIG_ARGS+=(--root "$ROOT_PREFIX")
 fi
-nixos-generate-config "${NIXOS_GENERATE_CONFIG_ARGS[@]}" --show-hardware-config | sudo tee "$TARGET/hardware-configuration.nix" >/dev/null
-sudo chown "$(id -u):$(id -g)" "$TARGET/hardware-configuration.nix"
+nixos-generate-config "${NIXOS_GENERATE_CONFIG_ARGS[@]}" --show-hardware-config | sudo tee "$HW_CONFIG" >/dev/null
+sudo chown "$(id -u):$(id -g)" "$HW_CONFIG"
 
 if [ -n "$BTRFS_PART_INPUT" ]; then
   BTRFS_UUID=$(sudo blkid -o value -s UUID "$BTRFS_PART")
@@ -310,12 +322,12 @@ if [ -n "$BTRFS_PART_INPUT" ]; then
   }
 
   TMP_HW=$(mktemp)
-  head -n -1 "$TARGET/hardware-configuration.nix" >"$TMP_HW"
+  head -n -1 "$HW_CONFIG" >"$TMP_HW"
   emit_fs_block "/.snapshots" "@snapshots"
   emit_fs_block "/home/.snapshots" "@home-snapshots"
   echo "}" >>"$TMP_HW"
 
-  mv "$TMP_HW" "$TARGET/hardware-configuration.nix"
+  mv "$TMP_HW" "$HW_CONFIG"
   echo "Added @snapshots/@home-snapshots entries to hardware-configuration.nix (ssd option: $BTRFS_IS_SSD)."
 else
   echo "No Btrfs subvolumes were created — hardware-configuration.nix has only the base filesystems; add @snapshots/@home-snapshots entries by hand if you create those subvolumes later."
@@ -329,10 +341,10 @@ shred -u /tmp/agenix-identity.txt
 
 if [ "$FRESH_INSTALL" = true ]; then
   step "Installing"
-  sudo nixos-install --root /mnt --flake "$TARGET#nixos" --no-root-passwd --option experimental-features "nix-command flakes"
+  sudo nixos-install --root /mnt --flake "$TARGET#$HOST" --no-root-passwd --option experimental-features "nix-command flakes"
 else
   step "Building and switching"
-  sudo nixos-rebuild switch --flake "$TARGET#nixos" --option experimental-features "nix-command flakes"
+  sudo nixos-rebuild switch --flake "$TARGET#$HOST" --option experimental-features "nix-command flakes"
 fi
 
 NIX_STORE_REMOUNTED_RW=false

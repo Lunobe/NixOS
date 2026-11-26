@@ -1,0 +1,2 @@
+disabled = ["repeated_keys"]
+ignore = ["hosts/*/hardware-configuration.nix"]

@@ -17,4 +17,6 @@ in {
   "r2-credentials.age".publicKeys = [lunobe];
   "restic-password.age".publicKeys = [lunobe];
   "gh-token.age".publicKeys = [lunobe];
+  "zerotier-network.age".publicKeys = [lunobe];
+  "syncthing-config.age".publicKeys = [lunobe];
 }

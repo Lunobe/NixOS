@@ -45,43 +45,72 @@
   }: let
     repoDir = "/etc/nixos";
     username = "lunobe";
-    hostName = "nixos";
     timeZone = "Asia/Jerusalem";
     system = "x86_64-linux";
-    specialArgs = {inherit repoDir username hostName timeZone;};
-  in {
-    formatter.${system} = nixpkgs.legacyPackages.${system}.alejandra;
+    pkgs = nixpkgs.legacyPackages.${system};
+    inherit (nixpkgs) lib;
 
-    nixosConfigurations.${hostName} = nixpkgs.lib.nixosSystem {
-      inherit system specialArgs;
-      modules = [
-        ./configuration.nix
-
-        # pins the nixpkgs registry alias to this flake's locked input, so
-        # `nix search`/`nix eval nixpkgs#...` resolve offline; freshness
-        # comes from `nx up`, not a live lookup.
-        {
-          nix.registry.nixpkgs.flake = nixpkgs;
-          nix.nixPath = ["nixpkgs=${nixpkgs}"];
-        }
-
-        {nixpkgs.overlays = [xwayland-satellite-patched.overlays.default];}
-
-        agenix.nixosModules.default
-        {environment.systemPackages = [agenix.packages.${system}.default];}
-
-        home-manager.nixosModules.default
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.${username} = ./home.nix;
-          home-manager.sharedModules = [
-            nix-index-database.homeModules.default
-            nx.homeManagerModules.default
-          ];
-          home-manager.extraSpecialArgs = specialArgs;
-        }
+    # only code, so wallpapers/fastfetch images don't invalidate the checks
+    lintSrc = lib.fileset.toSource {
+      root = ./.;
+      fileset = lib.fileset.unions [
+        (lib.fileset.fileFilter (f: f.hasExt "nix") ./.)
+        ./statix.toml
+        ./install.sh
       ];
     };
+    lintCheck = name: inputs: cmd:
+      pkgs.runCommand "check-${name}" {nativeBuildInputs = inputs;} ''
+        cd ${lintSrc}
+        ${cmd}
+        touch $out
+      '';
+    mkHost = hostName: let
+      specialArgs = {inherit repoDir username hostName timeZone;};
+    in
+      lib.nixosSystem {
+        inherit system specialArgs;
+        modules = [
+          ./configuration.nix
+          ./hosts/${hostName}
+
+          # pins the nixpkgs registry alias to this flake's locked input, so
+          # `nix search`/`nix eval nixpkgs#...` resolve offline; freshness
+          # comes from `nx up`, not a live lookup.
+          {
+            nix.registry.nixpkgs.flake = nixpkgs;
+            nix.nixPath = ["nixpkgs=${nixpkgs}"];
+          }
+
+          {nixpkgs.overlays = [xwayland-satellite-patched.overlays.default];}
+
+          agenix.nixosModules.default
+          {environment.systemPackages = [agenix.packages.${system}.default];}
+
+          home-manager.nixosModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.${username} = ./home.nix;
+            home-manager.sharedModules = [
+              nix-index-database.homeModules.default
+              nx.homeManagerModules.default
+            ];
+            home-manager.extraSpecialArgs = specialArgs;
+          }
+        ];
+      };
+  in {
+    formatter.${system} = pkgs.alejandra;
+
+    checks.${system} = {
+      format = lintCheck "format" [pkgs.alejandra] "alejandra --check .";
+      statix = lintCheck "statix" [pkgs.statix] "statix check .";
+      deadnix = lintCheck "deadnix" [pkgs.deadnix] "deadnix --fail --exclude hosts/*/hardware-configuration.nix .";
+      shellcheck = lintCheck "shellcheck" [pkgs.shellcheck] "shellcheck install.sh";
+    };
+
+    # one entry per hosts/<name>; the name is also the machine's hostname
+    nixosConfigurations = lib.genAttrs ["desktop" "laptop"] mkHost;
   };
 }

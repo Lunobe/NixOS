@@ -8,11 +8,6 @@
   timeZone,
   ...
 }: {
-  imports = [
-    ./hardware-configuration.nix
-    ./modules/libvirt
-  ];
-
   # --- nix ---
 
   nixpkgs.config.allowUnfree = true;
@@ -141,12 +136,13 @@
     openFirewall = true;
   };
 
-  services.zerotierone = {
-    enable = true;
-    joinNetworks = [
-      "8d1c312afa14c104"
-    ];
-  };
+  age.secrets.zerotierNetwork.file = "${repoDir}/secrets/zerotier-network.age";
+
+  services.zerotierone.enable = true;
+  # joinNetworks would put the network ID into the store and the public repo.
+  systemd.services.zerotierone.preStart = lib.mkAfter ''
+    touch "/var/lib/zerotier-one/networks.d/$(tr -d '[:space:]' < ${config.age.secrets.zerotierNetwork.path}).conf"
+  '';
 
   # --- locale ---
 
@@ -177,11 +173,6 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-    # Intel VAAPI for the laptop (Moonlight decoding); inert on the AMD desktop.
-    extraPackages = with pkgs; [
-      intel-media-driver
-      intel-vaapi-driver
-    ];
   };
 
   # --- audio ---
@@ -272,33 +263,66 @@
 
   programs.niri.enable = true;
 
+  age.secrets.syncthingConfig = {
+    file = "${repoDir}/secrets/syncthing-config.age";
+    owner = username;
+    mode = "0400";
+  };
+
+  # Devices/folders live in the syncthingConfig secret (Syncthing REST API JSON:
+  # {devices: [...], folders: [...]}) instead of services.syncthing.settings,
+  # which would publish device IDs and addresses. syncthing-secret-config
+  # applies them and does the override itself, hence the module's is off.
   services.syncthing = {
     enable = true;
-    user = "lunobe";
-    dataDir = "/home/lunobe";
-    configDir = "/home/lunobe/.config/syncthing";
+    user = username;
+    dataDir = "/home/${username}";
+    configDir = "/home/${username}/.config/syncthing";
     openDefaultPorts = true;
-    overrideDevices = true;
-    overrideFolders = true;
-    settings = {
-      devices = {
-        potato = {
-          id = "443ROIT-5VQ553Y-QLT3K33-HFCLH2K-PLYWTAQ-K4YY2G7-W6DVFE6-CZVFIQH";
-          addresses = ["tcp://lunobe.xyz:22000" "tcp://10.100.102.55:22000" "dynamic"];
-        };
-        phone.id = "7BBAYUA-EEBULTS-B566YE7-4XIULJX-RF2ZFBO-B4VQWFY-QB43K43-FAF2EQX";
-      };
-      folders = {
-        dreamlog = {
-          path = "/home/lunobe/Documents/My awesome vault/dreamlog";
-          devices = ["potato" "phone"];
-        };
-        diary = {
-          path = "/home/lunobe/Documents/My awesome vault/diary";
-          devices = ["potato" "phone"];
-        };
-      };
+    overrideDevices = false;
+    overrideFolders = false;
+  };
+
+  systemd.services.syncthing-secret-config = let
+    st = config.services.syncthing;
+  in {
+    description = "Apply Syncthing devices and folders from the agenix secret";
+    wantedBy = ["multi-user.target"];
+    partOf = ["syncthing.service"];
+    after = ["syncthing.service" "syncthing-init.service"];
+    restartTriggers = [(builtins.hashFile "sha256" ./secrets/syncthing-config.age)];
+    path = [pkgs.curl pkgs.jq pkgs.libxml2];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      User = st.user;
+      RuntimeDirectory = "syncthing-secret-config";
+      UMask = "0077";
     };
+    script = ''
+      set -euo pipefail
+      cfg=${config.age.secrets.syncthingConfig.path}
+      api=${st.guiAddress}/rest
+
+      until key=$(xmllint --xpath 'string(configuration/gui/apikey)' ${st.configDir}/config.xml 2>/dev/null) && [ -n "$key" ]; do
+        sleep 1
+      done
+      printf 'X-API-Key: %s\n' "$key" >"$RUNTIME_DIRECTORY/headers"
+      req() { curl -sSfL -H "@$RUNTIME_DIRECTORY/headers" --retry 60 --retry-delay 1 --retry-all-errors "$@"; }
+
+      jq -c '.devices[]' "$cfg" | while read -r d; do req --json "$d" -X POST "$api/config/devices"; done
+      jq -c '.folders[]' "$cfg" | while read -r f; do req --json "$f" -X POST "$api/config/folders"; done
+
+      self=$(req "$api/system/status" | jq -r .myID)
+      req "$api/config/devices" |
+        jq -r --arg self "$self" --slurpfile c "$cfg" \
+          '($c[0].devices | map(.deviceID)) as $keep | .[].deviceID | select(. != $self and (. as $id | $keep | index($id) | not))' |
+        while read -r id; do req -X DELETE "$api/config/devices/$id"; done
+      req "$api/config/folders" |
+        jq -r --slurpfile c "$cfg" \
+          '($c[0].folders | map(.id)) as $keep | .[].id | select(. as $id | $keep | index($id) | not)' |
+        while read -r id; do req -X DELETE "$api/config/folders/$id"; done
+    '';
   };
 
   # --- users ---
