@@ -276,7 +276,7 @@ NIXOS_GENERATE_CONFIG_ARGS=()
 if [ -n "$ROOT_PREFIX" ]; then
   NIXOS_GENERATE_CONFIG_ARGS+=(--root "$ROOT_PREFIX")
 fi
-nixos-generate-config "${NIXOS_GENERATE_CONFIG_ARGS[@]}" --show-hardware-config | sudo tee "$HW_CONFIG" >/dev/null
+sudo nixos-generate-config "${NIXOS_GENERATE_CONFIG_ARGS[@]}" --show-hardware-config | sudo tee "$HW_CONFIG" >/dev/null
 sudo chown "$(id -u):$(id -g)" "$HW_CONFIG"
 
 if [ -n "$BTRFS_PART_INPUT" ]; then
