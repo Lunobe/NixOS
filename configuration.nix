@@ -8,6 +8,11 @@
   timeZone,
   ...
 }: {
+  imports = [
+    ./hardware-configuration.nix
+    ./modules/libvirt
+  ];
+
   # --- nix ---
 
   nixpkgs.config.allowUnfree = true;
@@ -173,6 +178,11 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+    # Intel VAAPI for the laptop (Moonlight decoding); inert on the AMD desktop.
+    extraPackages = with pkgs; [
+      intel-media-driver
+      intel-vaapi-driver
+    ];
   };
 
   # --- audio ---
