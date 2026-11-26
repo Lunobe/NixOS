@@ -231,21 +231,16 @@
 
   services.gvfs.enable = true;
 
-  services.flatpak.enable = true;
-
-  # flatpak's module only manages the daemon, not remotes — this makes
-  # adding flathub self-healing instead of a one-off command a fresh
-  # install would lack.
-  systemd.services.flatpak-add-flathub = {
-    description = "Add the Flathub Flatpak remote";
-    wantedBy = ["multi-user.target"];
-    after = ["network-online.target"];
-    wants = ["network-online.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${pkgs.flatpak}/bin/flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
-    };
+  services.flatpak = {
+    enable = true;
+    remotes = [
+      {
+        name = "flathub";
+        location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+      }
+    ];
+    packages = ["org.vinegarhq.Sober"];
+    update.onActivation = true;
   };
 
   services.sunshine = {

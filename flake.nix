@@ -24,6 +24,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+
     # Fork adding X11 keyboard grab forwarding (xwayland-keyboard-grab-unstable-v1
     # -> keyboard-shortcuts-inhibit-unstable-v1) so XGrabKeyboard apps (VMware,
     # VirtualBox, remote-desktop) capture keys instead of niri intercepting them.
@@ -40,6 +42,7 @@
     nix-index-database,
     agenix,
     nx,
+    nix-flatpak,
     xwayland-satellite-patched,
     ...
   }: let
@@ -91,6 +94,8 @@
         }
 
         {nixpkgs.overlays = [xwayland-satellite-patched.overlays.default];}
+
+        nix-flatpak.nixosModules.nix-flatpak
 
         agenix.nixosModules.default
         {environment.systemPackages = [agenix.packages.${system}.default];}
