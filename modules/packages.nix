@@ -24,7 +24,6 @@
     kdePackages.kate
     kdePackages.kdenlive
     libnotify
-    llama-cpp-vulkan
     mangohud
     miru
     moonlight-qt
@@ -32,9 +31,8 @@
     nautilus
     nerd-fonts.jetbrains-mono
     nmap
-    obs-studio
     obsidian
-    opencode
+    obs-studio
     opencomposite
     pavucontrol
     pay-respects
@@ -42,7 +40,6 @@
     protonup-qt
     pulseaudio
     python3
-    python3Packages.huggingface-hub
     pywal
     qbittorrent
     rar
