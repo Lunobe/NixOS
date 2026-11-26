@@ -229,6 +229,8 @@
 
   programs.ydotool.enable = true;
 
+  services.gvfs.enable = true;
+
   services.flatpak.enable = true;
 
   # flatpak's module only manages the daemon, not remotes — this makes
