@@ -59,7 +59,6 @@
     wget
     wine
     wofi
-    xivlauncher
     xrizer
     xwayland-satellite
   ];
