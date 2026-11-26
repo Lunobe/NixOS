@@ -20,7 +20,6 @@
     imagemagick
     impression
     iperf3
-    jdk21
     jq
     kdePackages.kate
     kdePackages.kdenlive
